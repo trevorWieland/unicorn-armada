@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [project.scripts]
-unicorn-bonds = "unicorn_armada.cli:main"
+unicorn-rapport = "unicorn_armada.cli:main"
 
 [build-system]
 requires = ["setuptools>=68"]

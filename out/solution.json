@@ -37,7 +37,14 @@
       "ochlys"
     ]
   ],
-  "unit_bonds": [
+  "unassigned": [
+    "aubin",
+    "nina"
+  ],
+  "seed": 0,
+  "restarts": 50,
+  "swap_iterations": 200,
+  "unit_rapports": [
     6,
     6,
     4,
@@ -45,12 +52,5 @@
     3,
     3
   ],
-  "total_bonds": 26,
-  "unassigned": [
-    "aubin",
-    "nina"
-  ],
-  "seed": 0,
-  "restarts": 50,
-  "swap_iterations": 200
+  "total_rapports": 26
 }

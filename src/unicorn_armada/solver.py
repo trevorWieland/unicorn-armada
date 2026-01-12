@@ -56,7 +56,7 @@ class UnionFind:
 def solve(
     roster: list[str],
     units: list[int],
-    bond_edges: set[Pair],
+    rapport_edges: set[Pair],
     whitelist: set[Pair],
     blacklist: set[Pair],
     *,
@@ -82,8 +82,8 @@ def solve(
     for pair in whitelist:
         if not pair.issubset(roster_set):
             raise SolveError("Whitelist pair contains ids missing from roster")
-        if pair not in bond_edges:
-            raise SolveError("Whitelist pair is not a valid bond")
+        if pair not in rapport_edges:
+            raise SolveError("Whitelist pair is not a valid rapport")
 
     dummy_ids = build_dummy_ids(roster_set, total_slots - len(roster))
     if dummy_ids:
@@ -98,7 +98,7 @@ def solve(
 
     unassigned_members: list[str] = []
     if extra > 0:
-        drop_indices = choose_clusters_to_drop(clusters, bond_edges, extra)
+        drop_indices = choose_clusters_to_drop(clusters, rapport_edges, extra)
         kept_clusters = [
             cluster for idx, cluster in enumerate(clusters) if idx not in drop_indices
         ]
@@ -111,22 +111,21 @@ def solve(
         clusters = kept_clusters
 
     assigned_set = {member for cluster in clusters for member in cluster.members}
-    bond_edges = {pair for pair in bond_edges if pair.issubset(assigned_set)}
+    rapport_edges = {pair for pair in rapport_edges if pair.issubset(assigned_set)}
     blacklist = {pair for pair in blacklist if pair.issubset(assigned_set)}
 
-    cluster_bonds, cluster_conflicts = build_cluster_metrics(
-        clusters, bond_edges, blacklist
+    cluster_rapports, cluster_conflicts = build_cluster_metrics(
+        clusters, rapport_edges, blacklist
     )
-    potentials = compute_cluster_potentials(clusters, bond_edges)
+    potentials = compute_cluster_potentials(clusters, rapport_edges)
 
     rng = random.Random(seed)
     best_units: list[list[int]] | None = None
     best_score = -1
-    best_unit_scores: list[int] = []
 
     for _ in range(max(1, restarts)):
         unit_states = generate_initial_assignment(
-            clusters, units, cluster_bonds, cluster_conflicts, potentials, rng
+            clusters, units, cluster_rapports, cluster_conflicts, potentials, rng
         )
         if unit_states is None:
             continue
@@ -134,15 +133,14 @@ def solve(
         improve_by_swaps(
             unit_clusters,
             clusters,
-            cluster_bonds,
+            cluster_rapports,
             cluster_conflicts,
             swap_iterations,
         )
-        total_score, unit_scores = score_cluster_units(unit_clusters, cluster_bonds)
+        total_score, unit_scores = score_cluster_units(unit_clusters, cluster_rapports)
         if total_score > best_score:
             best_score = total_score
             best_units = [list(unit) for unit in unit_clusters]
-            best_unit_scores = unit_scores
 
     if best_units is None:
         raise SolveError("Unable to find a valid unit assignment")
@@ -156,7 +154,7 @@ def solve(
             members = [member for member in members if member not in dummy_ids]
         unit_members.append(members)
 
-    unit_bonds = [score_unit(unit, bond_edges) for unit in unit_members]
+    unit_rapports = [score_unit(unit, rapport_edges) for unit in unit_members]
     if dummy_ids and unassigned_members:
         unassigned_members = [
             member for member in unassigned_members if member not in dummy_ids
@@ -164,8 +162,8 @@ def solve(
 
     return Solution(
         units=unit_members,
-        unit_bonds=unit_bonds,
-        total_bonds=sum(unit_bonds),
+        unit_rapports=unit_rapports,
+        total_rapports=sum(unit_rapports),
         unassigned=unassigned_members,
         seed=seed,
         restarts=restarts,
@@ -230,7 +228,7 @@ def build_clusters(
 
 
 def compute_cluster_potentials(
-    clusters: list[Cluster], bond_edges: set[Pair]
+    clusters: list[Cluster], rapport_edges: set[Pair]
 ) -> list[int]:
     cluster_index = {}
     for idx, cluster in enumerate(clusters):
@@ -238,7 +236,7 @@ def compute_cluster_potentials(
             cluster_index[member] = idx
 
     potentials = [0 for _ in clusters]
-    for pair in bond_edges:
+    for pair in rapport_edges:
         left, right = tuple(pair)
         if left not in cluster_index or right not in cluster_index:
             continue
@@ -252,12 +250,12 @@ def compute_cluster_potentials(
 
 
 def choose_clusters_to_drop(
-    clusters: list[Cluster], bond_edges: set[Pair], extra: int
+    clusters: list[Cluster], rapport_edges: set[Pair], extra: int
 ) -> set[int]:
     if extra <= 0:
         return set()
 
-    potentials = compute_cluster_potentials(clusters, bond_edges)
+    potentials = compute_cluster_potentials(clusters, rapport_edges)
     dp_penalty = [float("inf")] * (extra + 1)
     dp_choice: list[tuple[int, int] | None] = [None] * (extra + 1)
     dp_penalty[0] = 0.0
@@ -293,7 +291,7 @@ def choose_clusters_to_drop(
 
 def build_cluster_metrics(
     clusters: list[Cluster],
-    bond_edges: set[Pair],
+    rapport_edges: set[Pair],
     blacklist: set[Pair],
 ) -> tuple[list[list[int]], list[list[bool]]]:
     count = len(clusters)
@@ -302,18 +300,18 @@ def build_cluster_metrics(
         for member in cluster.members:
             cluster_index[member] = idx
 
-    bonds = [[0 for _ in range(count)] for _ in range(count)]
-    for pair in bond_edges:
+    rapports = [[0 for _ in range(count)] for _ in range(count)]
+    for pair in rapport_edges:
         left, right = tuple(pair)
         if left not in cluster_index or right not in cluster_index:
             continue
         left_idx = cluster_index[left]
         right_idx = cluster_index[right]
         if left_idx == right_idx:
-            bonds[left_idx][right_idx] += 1
+            rapports[left_idx][right_idx] += 1
         else:
-            bonds[left_idx][right_idx] += 1
-            bonds[right_idx][left_idx] += 1
+            rapports[left_idx][right_idx] += 1
+            rapports[right_idx][left_idx] += 1
 
     conflicts = [[False for _ in range(count)] for _ in range(count)]
     for pair in blacklist:
@@ -327,13 +325,13 @@ def build_cluster_metrics(
         conflicts[left_idx][right_idx] = True
         conflicts[right_idx][left_idx] = True
 
-    return bonds, conflicts
+    return rapports, conflicts
 
 
 def generate_initial_assignment(
     clusters: list[Cluster],
     units: list[int],
-    cluster_bonds: list[list[int]],
+    cluster_rapports: list[list[int]],
     cluster_conflicts: list[list[bool]],
     potentials: list[int],
     rng: random.Random,
@@ -358,7 +356,7 @@ def generate_initial_assignment(
             if any(cluster_conflicts[cluster_idx][other] for other in state.clusters):
                 continue
             increment = sum(
-                cluster_bonds[cluster_idx][other] for other in state.clusters
+                cluster_rapports[cluster_idx][other] for other in state.clusters
             )
             remaining = state.capacity - size
             if (
@@ -383,7 +381,7 @@ def generate_initial_assignment(
 def improve_by_swaps(
     unit_clusters: list[list[int]],
     clusters: list[Cluster],
-    cluster_bonds: list[list[int]],
+    cluster_rapports: list[list[int]],
     cluster_conflicts: list[list[bool]],
     max_iterations: int,
 ) -> None:
@@ -419,7 +417,7 @@ def improve_by_swaps(
                             right_cluster,
                             left_unit,
                             right_unit,
-                            cluster_bonds,
+                            cluster_rapports,
                         )
                         if delta > 0:
                             left_unit[i], right_unit[j] = right_cluster, left_cluster
@@ -452,25 +450,25 @@ def swap_delta(
     right_cluster: int,
     left_unit: list[int],
     right_unit: list[int],
-    cluster_bonds: list[list[int]],
+    cluster_rapports: list[list[int]],
 ) -> int:
     left_before = sum(
-        cluster_bonds[left_cluster][other]
+        cluster_rapports[left_cluster][other]
         for other in left_unit
         if other != left_cluster
     )
     right_before = sum(
-        cluster_bonds[right_cluster][other]
+        cluster_rapports[right_cluster][other]
         for other in right_unit
         if other != right_cluster
     )
     left_after = sum(
-        cluster_bonds[left_cluster][other]
+        cluster_rapports[left_cluster][other]
         for other in right_unit
         if other != right_cluster
     )
     right_after = sum(
-        cluster_bonds[right_cluster][other]
+        cluster_rapports[right_cluster][other]
         for other in left_unit
         if other != left_cluster
     )
@@ -479,16 +477,16 @@ def swap_delta(
 
 def score_cluster_units(
     unit_clusters: list[list[int]],
-    cluster_bonds: list[list[int]],
+    cluster_rapports: list[list[int]],
 ) -> tuple[int, list[int]]:
     total = 0
     unit_scores: list[int] = []
     for unit in unit_clusters:
         score = 0
         for idx, left in enumerate(unit):
-            score += cluster_bonds[left][left]
+            score += cluster_rapports[left][left]
             for right in unit[idx + 1 :]:
-                score += cluster_bonds[left][right]
+                score += cluster_rapports[left][right]
         unit_scores.append(score)
         total += score
     return total, unit_scores

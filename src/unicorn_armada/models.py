@@ -15,7 +15,7 @@ class Character(BaseModel):
         return value.strip()
 
 
-class BondListEntry(BaseModel):
+class RapportListEntry(BaseModel):
     id: Annotated[str, Field(min_length=1)]
     pairs: list[str] = Field(default_factory=list)
 
@@ -42,21 +42,21 @@ class BondListEntry(BaseModel):
         return cleaned
 
     @model_validator(mode="after")
-    def validate_pairs(self) -> "BondListEntry":
+    def validate_pairs(self) -> "RapportListEntry":
         if self.id in self.pairs:
-            raise ValueError("Bond list cannot include self in pairs")
+            raise ValueError("Rapport list cannot include self in pairs")
         return self
 
 
 class Dataset(BaseModel):
     characters: list[Character]
-    bonds: list[BondListEntry]
+    rapports: list[RapportListEntry]
 
 
 class Solution(BaseModel):
     units: list[list[str]]
-    unit_bonds: list[int]
-    total_bonds: int
+    unit_rapports: list[int]
+    total_rapports: int
     unassigned: list[str]
     seed: int
     restarts: int

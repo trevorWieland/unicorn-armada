@@ -27,7 +27,7 @@ DEFAULT_BLACKLIST = Path("config/blacklist.csv")
 
 @app.callback()
 def root() -> None:
-    """Bond planner CLI."""
+    """Rapport planner CLI."""
 
 
 def format_pair(pair: Pair) -> str:
@@ -40,11 +40,11 @@ def sort_pairs(pairs: set[Pair]) -> list[Pair]:
 
 
 def write_summary(path: Path, solution, units: list[int]) -> None:
-    lines = [f"Total bonds: {solution.total_bonds}"]
+    lines = [f"Total rapports: {solution.total_rapports}"]
     for idx, (unit, score) in enumerate(
-        zip(solution.units, solution.unit_bonds), start=1
+        zip(solution.units, solution.unit_rapports), start=1
     ):
-        lines.append(f"Unit {idx} ({units[idx - 1]} slots): {score} bonds")
+        lines.append(f"Unit {idx} ({units[idx - 1]} slots): {score} rapports")
         lines.append(", ".join(unit) if unit else "(empty)")
     if solution.unassigned:
         lines.append("Unassigned:")
@@ -58,7 +58,9 @@ def solve_units(
         None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
     ),
     roster: Optional[Path] = typer.Option(
-        None, "--roster", help="CSV of available character ids (default: config/roster.csv)"
+        None,
+        "--roster",
+        help="CSV of available character ids (default: config/roster.csv)",
     ),
     units: Optional[str] = typer.Option(
         None,
@@ -69,10 +71,14 @@ def solve_units(
         None, "--units-file", help="JSON file containing unit sizes list"
     ),
     whitelist: Optional[Path] = typer.Option(
-        None, "--whitelist", help="CSV of required pairs (default: config/whitelist.csv)"
+        None,
+        "--whitelist",
+        help="CSV of required pairs (default: config/whitelist.csv)",
     ),
     blacklist: Optional[Path] = typer.Option(
-        None, "--blacklist", help="CSV of forbidden pairs (default: config/blacklist.csv)"
+        None,
+        "--blacklist",
+        help="CSV of forbidden pairs (default: config/blacklist.csv)",
     ),
     seed: int = typer.Option(0, help="Random seed for deterministic output"),
     restarts: int = typer.Option(50, help="Greedy restart attempts"),
@@ -132,15 +138,15 @@ def solve_units(
     except InputError as exc:
         raise typer.BadParameter(str(exc)) from exc
 
-    bond_edges: set[Pair] = set()
-    for entry in dataset_data.bonds:
+    rapport_edges: set[Pair] = set()
+    for entry in dataset_data.rapports:
         if entry.id not in character_set:
             continue
         for partner in entry.pairs:
             if partner not in character_set:
                 continue
-            bond_edges.add(pair_key(entry.id, partner))
-    bond_edges = {pair for pair in bond_edges if pair.issubset(roster_set)}
+            rapport_edges.add(pair_key(entry.id, partner))
+    rapport_edges = {pair for pair in rapport_edges if pair.issubset(roster_set)}
 
     try:
         if whitelist is None:
@@ -173,10 +179,14 @@ def solve_units(
             f"Whitelist pair contains missing roster ids: {formatted}"
         )
 
-    invalid_bonds = {pair for pair in whitelist_pairs if pair not in bond_edges}
-    if invalid_bonds:
-        formatted = "; ".join(format_pair(pair) for pair in sort_pairs(invalid_bonds))
-        raise typer.BadParameter(f"Whitelist pair is not a valid bond: {formatted}")
+    invalid_rapports = {pair for pair in whitelist_pairs if pair not in rapport_edges}
+    if invalid_rapports:
+        formatted = "; ".join(
+            format_pair(pair) for pair in sort_pairs(invalid_rapports)
+        )
+        raise typer.BadParameter(
+            f"Whitelist pair is not a valid rapport: {formatted}"
+        )
 
     ignored_blacklist = {
         pair for pair in blacklist_pairs if not pair.issubset(roster_set)
@@ -192,7 +202,7 @@ def solve_units(
         solution = solve(
             roster_ids,
             unit_sizes,
-            bond_edges,
+            rapport_edges,
             whitelist_pairs,
             blacklist_pairs,
             seed=seed,
@@ -208,7 +218,7 @@ def solve_units(
     summary.parent.mkdir(parents=True, exist_ok=True)
     write_summary(summary, solution, unit_sizes)
 
-    typer.echo(f"Total bonds: {solution.total_bonds}")
+    typer.echo(f"Total rapports: {solution.total_rapports}")
     typer.echo(f"Wrote solution to {out}")
     typer.echo(f"Wrote summary to {summary}")
 

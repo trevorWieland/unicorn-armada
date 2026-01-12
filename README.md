@@ -1,11 +1,11 @@
-# Unicorn Armada Bond Planner
+# Unicorn Armada Rapport Planner
 
-A small CLI for packing Unicorn Overlord characters into units to maximize bonded pairs, while enforcing required/forbidden pairings.
+A small CLI for packing Unicorn Overlord characters into units to maximize rapport pairs, while enforcing required/forbidden pairings.
 
 ## Quick start
 
 ```bash
-uv run unicorn-bonds solve-units \
+uv run unicorn-rapport solve-units \
   --units 4,3,4,3,4,3
 ```
 
@@ -29,7 +29,7 @@ Outputs:
     {"id": "alain", "name": "Alain"},
     {"id": "scarlett", "name": "Scarlett"}
   ],
-  "bonds": [
+  "rapports": [
     {"id": "alain", "pairs": ["scarlett"]},
     {"id": "scarlett", "pairs": ["alain"]}
   ]
@@ -38,7 +38,7 @@ Outputs:
 
 Notes:
 - Duplicate or mirrored pairs are automatically deduped.
-- You can omit an id from `bonds` to imply no listed pairs, or include an empty list.
+- You can omit an id from `rapports` to imply no listed pairs, or include an empty list.
  - If the roster is smaller than the total slots, units will contain empty slots.
 
 ### Roster CSV
@@ -58,7 +58,7 @@ a,b
 alain,scarlet
 ```
 
-- Whitelist pairs must be valid bonds and must appear together.
+- Whitelist pairs must be valid rapports and must appear together.
 - Blacklist pairs must not appear together.
 
 ### Unit sizes
