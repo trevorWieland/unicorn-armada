@@ -1,0 +1,563 @@
+{
+  "characters": [
+    {
+      "id": "alain",
+      "name": "Alain"
+    },
+    {
+      "id": "scarlett",
+      "name": "Scarlett"
+    },
+    {
+      "id": "lex",
+      "name": "Lex"
+    },
+    {
+      "id": "josef",
+      "name": "Josef"
+    },
+    {
+      "id": "chloe",
+      "name": "Chloe"
+    },
+    {
+      "id": "hodrick",
+      "name": "Hodrick"
+    },
+    {
+      "id": "clive",
+      "name": "Clive"
+    },
+    {
+      "id": "travis",
+      "name": "Travis"
+    },
+    {
+      "id": "aubin",
+      "name": "Aubin"
+    },
+    {
+      "id": "rolf",
+      "name": "Rolf"
+    },
+    {
+      "id": "gammel",
+      "name": "Gammel"
+    },
+    {
+      "id": "bruno",
+      "name": "Bruno"
+    },
+    {
+      "id": "sharon",
+      "name": "Sharon"
+    },
+    {
+      "id": "mandrin",
+      "name": "Mandrin"
+    },
+    {
+      "id": "ochlys",
+      "name": "Ochlys"
+    },
+    {
+      "id": "mordon",
+      "name": "Mordon"
+    },
+    {
+      "id": "adel",
+      "name": "Adel"
+    },
+    {
+      "id": "fran",
+      "name": "Fran"
+    },
+    {
+      "id": "nina",
+      "name": "Nina"
+    },
+    {
+      "id": "selvie",
+      "name": "Selvie"
+    },
+    {
+      "id": "berenice",
+      "name": "Berenice"
+    },
+    {
+      "id": "yahna",
+      "name": "Yahna"
+    },
+    {
+      "id": "auch",
+      "name": "Auch"
+    },
+    {
+      "id": "melisandre",
+      "name": "Melisandre"
+    },
+    {
+      "id": "colm",
+      "name": "Colm"
+    },
+    {
+      "id": "monica",
+      "name": "Monica"
+    },
+    {
+      "id": "tatiana",
+      "name": "Tatiana"
+    },
+    {
+      "id": "miriam",
+      "name": "Miriam"
+    },
+    {
+      "id": "kitra",
+      "name": "Kitra"
+    },
+    {
+      "id": "renault",
+      "name": "Renault"
+    },
+    {
+      "id": "virginia",
+      "name": "Virginia"
+    },
+    {
+      "id": "leah",
+      "name": "Leah"
+    },
+    {
+      "id": "berengaria",
+      "name": "Berengaria"
+    },
+    {
+      "id": "primm",
+      "name": "Primm"
+    },
+    {
+      "id": "aramis",
+      "name": "Aramis"
+    },
+    {
+      "id": "magellan",
+      "name": "Magellan"
+    },
+    {
+      "id": "liza",
+      "name": "Liza"
+    },
+    {
+      "id": "gloucester",
+      "name": "Gloucester"
+    },
+    {
+      "id": "jeremy",
+      "name": "Jeremy"
+    },
+    {
+      "id": "hilda",
+      "name": "Hilda"
+    },
+    {
+      "id": "gilbert",
+      "name": "Gilbert"
+    },
+    {
+      "id": "amalia",
+      "name": "Amalia"
+    },
+    {
+      "id": "rosalinde",
+      "name": "Rosalinde"
+    },
+    {
+      "id": "ridiel",
+      "name": "Ridiel"
+    },
+    {
+      "id": "lhinalagos",
+      "name": "Lhinalagos"
+    },
+    {
+      "id": "celeste",
+      "name": "Celeste"
+    },
+    {
+      "id": "ithilion",
+      "name": "Ithilion"
+    },
+    {
+      "id": "eltolinde",
+      "name": "Eltolinde"
+    },
+    {
+      "id": "galadmir",
+      "name": "Galadmir"
+    },
+    {
+      "id": "railanor",
+      "name": "Railanor"
+    },
+    {
+      "id": "yunifi",
+      "name": "Yunifi"
+    },
+    {
+      "id": "morard",
+      "name": "Morard"
+    },
+    {
+      "id": "ramona",
+      "name": "Ramona"
+    },
+    {
+      "id": "dinah",
+      "name": "Dinah"
+    },
+    {
+      "id": "bertrand",
+      "name": "Bertrand"
+    },
+    {
+      "id": "govil",
+      "name": "Govil"
+    },
+    {
+      "id": "bryce",
+      "name": "Bryce"
+    },
+    {
+      "id": "raenys",
+      "name": "Raenys"
+    },
+    {
+      "id": "umerus",
+      "name": "Umerus"
+    },
+    {
+      "id": "fodoquia",
+      "name": "Fodoquia"
+    },
+    {
+      "id": "jerome",
+      "name": "Jerome"
+    },
+    {
+      "id": "sanatio",
+      "name": "Sanatio"
+    },
+    {
+      "id": "hermann",
+      "name": "Hermann"
+    },
+    {
+      "id": "nigel",
+      "name": "Nigel"
+    },
+    {
+      "id": "ilenia",
+      "name": "Ilenia"
+    },
+    {
+      "id": "mille",
+      "name": "Mille"
+    },
+    {
+      "id": "gailey",
+      "name": "Gailey"
+    },
+    {
+      "id": "alcina",
+      "name": "Alcina"
+    },
+    {
+      "id": "elgor",
+      "name": "Elgor"
+    },
+    {
+      "id": "beaumont",
+      "name": "Beaumont"
+    }
+  ],
+  "bonds": [
+    {
+      "id": "alain",
+      "pairs": [
+        "lex",
+        "chloe",
+        "hodrick",
+        "clive",
+        "josef",
+        "travis",
+        "aubin",
+        "rolf",
+        "bruno",
+        "sharon",
+        "modron",
+        "yahna",
+        "berenice",
+        "kitra",
+        "miriam",
+        "fran",
+        "scarlett",
+        "auch",
+        "selvie",
+        "ochlys"
+      ]
+    },
+    {
+      "id": "scarlett",
+      "pairs": [
+        "alain",
+        "lex",
+        "chloe",
+        "josef"
+      ]
+    },
+    {
+      "id": "lex",
+      "pairs": [
+        "alain",
+        "clive",
+        "josef",
+        "scarlett",
+        "sharon",
+        "selvie",
+        "chloe",
+        "hodrick"
+      ]
+    },
+    {
+      "id": "josef",
+      "pairs": [
+        "alain",
+        "lex",
+        "chloe",
+        "hodrick",
+        "clive",
+        "travis",
+        "yahna",
+        "miriam",
+        "scarlett",
+        "selvie"
+      ]
+    },
+    {
+      "id": "chloe",
+      "pairs": [
+        "alain",
+        "hodrick",
+        "clive",
+        "lex",
+        "travis",
+        "josef",
+        "rolf",
+        "yahna",
+        "scarlett"
+      ]
+    },
+    {
+      "id": "hodrick",
+      "pairs": [
+        "alain",
+        "chloe",
+        "josef",
+        "lex",
+        "yahna",
+        "clive"
+      ]
+    },
+    {
+      "id": "clive",
+      "pairs": [
+        "alain",
+        "lex",
+        "chloe",
+        "josef",
+        "hodrick",
+        "mordon",
+        "berenice"
+      ]
+    },
+    {
+      "id": "travis",
+      "pairs": [
+        "alain",
+        "chloe",
+        "josef",
+        "bruno"
+      ]
+    },
+    {
+      "id": "aubin",
+      "pairs": [
+        "alain"
+      ]
+    },
+    {
+      "id": "rolf",
+      "pairs": [
+        "alain",
+        "chloe",
+        "mordon",
+        "auch"
+      ]
+    },
+    {
+      "id": "auch",
+      "pairs": [
+        "alain",
+        "rolf",
+        "kitra",
+        "selvie",
+        "yahna",
+        "berenice"
+      ]
+    },
+    {
+      "id": "bruno",
+      "pairs": [
+        "alain",
+        "travis",
+        "sharon",
+        "selvie"
+      ]
+    },
+    {
+      "id": "sharon",
+      "pairs": [
+        "alain",
+        "lex",
+        "bruno",
+        "ochlys",
+        "kitra"
+      ]
+    },
+    {
+      "id": "mordon",
+      "pairs": [
+        "alain",
+        "clive",
+        "rolf",
+        "berenice",
+        "kitra"
+      ]
+    },
+    {
+      "id": "fran",
+      "pairs": [
+        "alain",
+        "kitra",
+        "miriam"
+      ]
+    },
+    {
+      "id": "miriam",
+      "pairs": [
+        "alain",
+        "kitra",
+        "selvie",
+        "josef",
+        "fran"
+      ]
+    },
+    {
+      "id": "kitra",
+      "pairs": [
+        "alain",
+        "mordon",
+        "fran",
+        "sharon",
+        "auch",
+        "berenice",
+        "miriam"
+      ]
+    },
+    {
+      "id": "ochlys",
+      "pairs": [
+        "alain",
+        "sharon"
+      ]
+    },
+    {
+      "id": "yahna",
+      "pairs": [
+        "alain",
+        "hodrick",
+        "chloe",
+        "josef",
+        "auch"
+      ]
+    },
+    {
+      "id": "selvie",
+      "pairs": [
+        "alain",
+        "lex",
+        "miriam",
+        "auch",
+        "josef",
+        "bruno"
+      ]
+    },
+    {
+      "id": "berenice",
+      "pairs": [
+        "alain",
+        "mordon",
+        "clive",
+        "kitra",
+        "auch"
+      ]
+    },
+    {
+      "id": "adel",
+      "pairs": [
+        "alain",
+        "rolf",
+        "yahna",
+        "berenice",
+        "clive"
+      ]
+    },
+    {
+      "id": "renault",
+      "pairs": [
+        "alain",
+        "clive",
+        "hodrick",
+        "josef"
+      ]
+    },
+    {
+      "id": "nina",
+      "pairs": [
+        "alain",
+        "yahna"
+      ]
+    },
+    {
+      "id": "melisandre",
+      "pairs": [
+        "alain",
+        "adel",
+        "scarlett",
+        "auch",
+        "colm"
+      ]
+    },
+    {
+      "id": "colm",
+      "pairs": [
+        "alain",
+        "melisandre",
+        "sharon",
+        "miriam",
+        "lex"
+      ]
+    }
+  ]
+}

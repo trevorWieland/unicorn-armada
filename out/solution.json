@@ -1,0 +1,56 @@
+{
+  "units": [
+    [
+      "alain",
+      "scarlett",
+      "lex",
+      "chloe"
+    ],
+    [
+      "clive",
+      "renault",
+      "josef",
+      "hodrick"
+    ],
+    [
+      "mordon",
+      "auch",
+      "berenice",
+      "rolf"
+    ],
+    [
+      "fran",
+      "miriam",
+      "selvie",
+      "kitra"
+    ],
+    [
+      "adel",
+      "colm",
+      "melisandre",
+      "yahna"
+    ],
+    [
+      "travis",
+      "sharon",
+      "bruno",
+      "ochlys"
+    ]
+  ],
+  "unit_bonds": [
+    6,
+    6,
+    4,
+    4,
+    3,
+    3
+  ],
+  "total_bonds": 26,
+  "unassigned": [
+    "aubin",
+    "nina"
+  ],
+  "seed": 0,
+  "restarts": 50,
+  "swap_iterations": 200
+}

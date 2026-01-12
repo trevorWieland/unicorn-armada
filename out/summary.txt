@@ -1,0 +1,15 @@
+Total bonds: 26
+Unit 1 (4 slots): 6 bonds
+alain, scarlett, lex, chloe
+Unit 2 (4 slots): 6 bonds
+clive, renault, josef, hodrick
+Unit 3 (4 slots): 4 bonds
+mordon, auch, berenice, rolf
+Unit 4 (4 slots): 4 bonds
+fran, miriam, selvie, kitra
+Unit 5 (4 slots): 3 bonds
+adel, colm, melisandre, yahna
+Unit 6 (4 slots): 3 bonds
+travis, sharon, bruno, ochlys
+Unassigned:
+aubin, nina
