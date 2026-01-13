@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Callable, Iterable
 import random
 
 from .models import Solution
@@ -63,6 +63,8 @@ def solve(
     seed: int,
     restarts: int,
     swap_iterations: int,
+    combat_score_fn: Callable[[list[list[str]]], float] | None = None,
+    min_combat_score: float | None = None,
 ) -> Solution:
     if not units:
         raise SolveError("At least one unit size is required")
@@ -78,6 +80,12 @@ def solve(
 
     if whitelist & blacklist:
         raise SolveError("Whitelist and blacklist overlap")
+
+    if min_combat_score is not None:
+        if combat_score_fn is None:
+            raise SolveError("Minimum combat score requires combat data")
+        if min_combat_score < 0:
+            raise SolveError("Minimum combat score cannot be negative")
 
     for pair in whitelist:
         if not pair.issubset(roster_set):
@@ -122,6 +130,7 @@ def solve(
     rng = random.Random(seed)
     best_units: list[list[int]] | None = None
     best_score = -1
+    best_combat_score = float("-inf")
 
     for _ in range(max(1, restarts)):
         unit_states = generate_initial_assignment(
@@ -138,21 +147,30 @@ def solve(
             swap_iterations,
         )
         total_score, unit_scores = score_cluster_units(unit_clusters, cluster_rapports)
+        combat_score = 0.0
+        if combat_score_fn is not None:
+            unit_members = build_unit_members_from_clusters(
+                unit_clusters, clusters, dummy_ids
+            )
+            combat_score = combat_score_fn(unit_members)
+            if min_combat_score is not None and combat_score < min_combat_score:
+                continue
         if total_score > best_score:
             best_score = total_score
+            best_combat_score = combat_score
+            best_units = [list(unit) for unit in unit_clusters]
+        elif total_score == best_score and combat_score > best_combat_score:
+            best_combat_score = combat_score
             best_units = [list(unit) for unit in unit_clusters]
 
     if best_units is None:
+        if min_combat_score is not None:
+            raise SolveError(
+                "Unable to find a valid unit assignment meeting combat score minimum"
+            )
         raise SolveError("Unable to find a valid unit assignment")
 
-    unit_members: list[list[str]] = []
-    for unit in best_units:
-        members: list[str] = []
-        for cluster_idx in unit:
-            members.extend(clusters[cluster_idx].members)
-        if dummy_ids:
-            members = [member for member in members if member not in dummy_ids]
-        unit_members.append(members)
+    unit_members = build_unit_members_from_clusters(best_units, clusters, dummy_ids)
 
     unit_rapports = [score_unit(unit, rapport_edges) for unit in unit_members]
     if dummy_ids and unassigned_members:
@@ -169,6 +187,22 @@ def solve(
         restarts=restarts,
         swap_iterations=swap_iterations,
     )
+
+
+def build_unit_members_from_clusters(
+    unit_clusters: list[list[int]],
+    clusters: list[Cluster],
+    dummy_ids: set[str],
+) -> list[list[str]]:
+    unit_members: list[list[str]] = []
+    for unit in unit_clusters:
+        members: list[str] = []
+        for cluster_idx in unit:
+            members.extend(clusters[cluster_idx].members)
+        if dummy_ids:
+            members = [member for member in members if member not in dummy_ids]
+        unit_members.append(members)
+    return unit_members
 
 
 def build_dummy_ids(roster_set: set[str], deficit: int) -> set[str]:

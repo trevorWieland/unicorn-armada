@@ -10,6 +10,10 @@ def normalize_id(value: str) -> str:
     return value.strip()
 
 
+def normalize_tag(value: str) -> str:
+    return value.strip().lower()
+
+
 def pair_key(a: str, b: str) -> Pair:
     if a == b:
         raise ValueError("Pair cannot contain identical ids")

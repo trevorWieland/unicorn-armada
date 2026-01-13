@@ -5,14 +5,18 @@ from typing import Optional
 
 import typer
 
+from .combat import build_class_index, compute_combat_summary
 from .io import (
     InputError,
+    load_character_classes_csv,
+    load_combat_scoring_json,
     load_dataset,
     load_pairs_csv,
     load_roster_csv,
     load_units_json,
     parse_units_arg,
 )
+from .models import CombatScoringConfig
 from .solver import SolveError, solve
 from .utils import Pair, pair_key
 
@@ -23,6 +27,8 @@ DEFAULT_DATASET = Path("data/dataset.json")
 DEFAULT_ROSTER = Path("config/roster.csv")
 DEFAULT_WHITELIST = Path("config/whitelist.csv")
 DEFAULT_BLACKLIST = Path("config/blacklist.csv")
+DEFAULT_CHARACTER_CLASSES = Path("config/character_classes.csv")
+DEFAULT_COMBAT_SCORING = Path("config/combat_scoring.json")
 
 
 @app.callback()
@@ -41,10 +47,22 @@ def sort_pairs(pairs: set[Pair]) -> list[Pair]:
 
 def write_summary(path: Path, solution, units: list[int]) -> None:
     lines = [f"Total rapports: {solution.total_rapports}"]
+    if solution.combat is not None:
+        lines.append(f"Total combat score: {solution.combat.total_score:.2f}")
     for idx, (unit, score) in enumerate(
         zip(solution.units, solution.unit_rapports), start=1
     ):
-        lines.append(f"Unit {idx} ({units[idx - 1]} slots): {score} rapports")
+        combat_score = None
+        if solution.combat is not None:
+            if idx - 1 < len(solution.combat.unit_scores):
+                combat_score = solution.combat.unit_scores[idx - 1]
+        if combat_score is None:
+            lines.append(f"Unit {idx} ({units[idx - 1]} slots): {score} rapports")
+        else:
+            lines.append(
+                f"Unit {idx} ({units[idx - 1]} slots): {score} rapports, "
+                f"{combat_score:.2f} combat"
+            )
         lines.append(", ".join(unit) if unit else "(empty)")
     if solution.unassigned:
         lines.append("Unassigned:")
@@ -83,6 +101,11 @@ def solve_units(
     seed: int = typer.Option(0, help="Random seed for deterministic output"),
     restarts: int = typer.Option(50, help="Greedy restart attempts"),
     swap_iterations: int = typer.Option(200, help="Swap-improvement iterations"),
+    min_combat_score: Optional[float] = typer.Option(
+        None,
+        "--min-combat-score",
+        help="Minimum total combat score required for a solution",
+    ),
     out: Path = typer.Option(
         Path("out/solution.json"), "--out", help="Output JSON path"
     ),
@@ -184,9 +207,7 @@ def solve_units(
         formatted = "; ".join(
             format_pair(pair) for pair in sort_pairs(invalid_rapports)
         )
-        raise typer.BadParameter(
-            f"Whitelist pair is not a valid rapport: {formatted}"
-        )
+        raise typer.BadParameter(f"Whitelist pair is not a valid rapport: {formatted}")
 
     ignored_blacklist = {
         pair for pair in blacklist_pairs if not pair.issubset(roster_set)
@@ -198,6 +219,101 @@ def solve_units(
         typer.echo(f"Warning: ignoring blacklist pairs not in roster: {formatted}")
     blacklist_pairs = {pair for pair in blacklist_pairs if pair.issubset(roster_set)}
 
+    combat_scoring = CombatScoringConfig()
+    if DEFAULT_COMBAT_SCORING.exists():
+        try:
+            combat_scoring = load_combat_scoring_json(DEFAULT_COMBAT_SCORING)
+        except InputError as exc:
+            raise typer.BadParameter(str(exc)) from exc
+
+    overrides: dict[str, str] = {}
+    if DEFAULT_CHARACTER_CLASSES.exists():
+        try:
+            overrides = load_character_classes_csv(DEFAULT_CHARACTER_CLASSES)
+        except InputError as exc:
+            raise typer.BadParameter(str(exc)) from exc
+
+    unknown_override_characters = set(overrides) - character_set
+    if unknown_override_characters:
+        formatted = ", ".join(sorted(unknown_override_characters))
+        raise typer.BadParameter(
+            f"Character class overrides contain unknown ids: {formatted}"
+        )
+
+    class_index = build_class_index(dataset_data.classes)
+    class_lines = {line.id: line for line in dataset_data.class_lines}
+    default_classes = {
+        character_id: info.default_class
+        for character_id, info in dataset_data.character_classes.items()
+    }
+    if dataset_data.classes and not dataset_data.character_classes:
+        typer.echo(
+            "Warning: dataset character classes are empty; combat scoring will treat "
+            "all members as unknown."
+        )
+
+    override_class_ids = set(overrides.values())
+    unknown_override_classes = {
+        class_id for class_id in override_class_ids if class_id not in class_index
+    }
+    if unknown_override_classes:
+        formatted = ", ".join(sorted(unknown_override_classes))
+        raise typer.BadParameter(
+            f"Character class overrides reference unknown classes: {formatted}"
+        )
+
+    for character_id, class_id in overrides.items():
+        info = dataset_data.character_classes.get(character_id)
+        if info is None:
+            raise typer.BadParameter(
+                f"Character {character_id} has no default class in dataset"
+            )
+        if info.class_line is None:
+            if class_id != info.default_class:
+                raise typer.BadParameter(
+                    f"Character {character_id} override {class_id} is not allowed; "
+                    "no class line is defined."
+                )
+            continue
+        line = class_lines.get(info.class_line)
+        if line is None:
+            raise typer.BadParameter(
+                f"Character {character_id} references unknown class line "
+                f"{info.class_line}"
+            )
+        if class_id not in line.classes:
+            raise typer.BadParameter(
+                f"Character {character_id} override {class_id} is not part of class "
+                f"line {info.class_line}"
+            )
+
+    effective_classes = dict(default_classes)
+    effective_classes.update(overrides)
+
+    if dataset_data.classes and dataset_data.character_classes:
+        missing_defaults = roster_set - set(effective_classes)
+        if missing_defaults:
+            formatted = ", ".join(sorted(missing_defaults))
+            typer.echo(
+                f"Warning: missing default classes for roster characters: {formatted}"
+            )
+
+    combat_score_fn = None
+    if dataset_data.classes and effective_classes:
+
+        def combat_score_fn(units: list[list[str]]) -> float:
+            return compute_combat_summary(
+                units,
+                effective_classes,
+                dataset_data.classes,
+                combat_scoring,
+            ).total_score
+
+    if min_combat_score is not None and combat_score_fn is None:
+        raise typer.BadParameter(
+            "Minimum combat score requires class data and character classes"
+        )
+
     try:
         solution = solve(
             roster_ids,
@@ -208,9 +324,27 @@ def solve_units(
             seed=seed,
             restarts=restarts,
             swap_iterations=swap_iterations,
+            combat_score_fn=combat_score_fn,
+            min_combat_score=min_combat_score,
         )
     except SolveError as exc:
         raise typer.BadParameter(str(exc)) from exc
+
+    if not dataset_data.classes or not effective_classes:
+        combat_summary = compute_combat_summary(
+            [[] for _ in solution.units],
+            {},
+            [],
+            CombatScoringConfig(),
+        )
+    else:
+        combat_summary = compute_combat_summary(
+            solution.units,
+            effective_classes,
+            dataset_data.classes,
+            combat_scoring,
+        )
+    solution = solution.model_copy(update={"combat": combat_summary})
 
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(solution.model_dump_json(indent=2))

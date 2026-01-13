@@ -281,6 +281,801 @@
       "name": "Beaumont"
     }
   ],
+  "classes": [
+    {
+      "id": "lord",
+      "name": "Lord",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "shield",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Morale Boost",
+        "description": "Gain more Valor Points when defeating enemy units."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": "high_lord"
+    },
+    {
+      "id": "fighter",
+      "name": "Fighter",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "shield",
+        "infantry",
+        "armor"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Resist Ranged Assist",
+        "description": "Take less damage from ranged assists."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": "vanguard"
+    },
+    {
+      "id": "soldier",
+      "name": "Soldier",
+      "roles": [
+        "frontline",
+        "support"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Quick Rest",
+        "description": "Reduce wait time while resting."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": "sergeant"
+    },
+    {
+      "id": "housecarl",
+      "name": "Housecarl",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Barrier Breaker",
+        "description": "Can break gates and barricades more easily."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": "viking"
+    },
+    {
+      "id": "swordfighter",
+      "name": "Swordfighter",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Greater Garrison",
+        "description": "Recover HP and stamina faster when garrisoned."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": "swordmaster"
+    },
+    {
+      "id": "sellsword",
+      "name": "Sellsword",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Greater Garrison",
+        "description": "Recover HP and stamina faster when garrisoned."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 80,
+      "promotes_to": "landsknecht"
+    },
+    {
+      "id": "hoplite",
+      "name": "Hoplite",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "greatshield",
+        "infantry",
+        "armor"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Resist Ranged Assist",
+        "description": "Take less damage from ranged assists."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 50,
+      "promotes_to": "legionnaire"
+    },
+    {
+      "id": "gladiator",
+      "name": "Gladiator",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Barrier Breaker",
+        "description": "Can break gates and barricades more easily."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 80,
+      "promotes_to": "berserker"
+    },
+    {
+      "id": "warrior",
+      "name": "Warrior",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Barrier Breaker",
+        "description": "Can break gates and barricades more easily."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": "breaker"
+    },
+    {
+      "id": "hunter",
+      "name": "Hunter",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "archer"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "bow",
+        "infantry",
+        "archer"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "ranged",
+      "leader_effect": {
+        "name": "Ranged Assist",
+        "description": "Can provide ranged assists for allied units."
+      },
+      "class_trait": "2x damage for bow attacks v. Flying",
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": "sniper"
+    },
+    {
+      "id": "thief",
+      "name": "Thief",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "flex",
+      "class_types": [
+        "sword",
+        "infantry",
+        "scout"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Quick Rest",
+        "description": "Reduce wait time while resting."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 170,
+      "promotes_to": "rogue"
+    },
+    {
+      "id": "knight",
+      "name": "Knight",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "cavalry"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "shield",
+        "cavalry"
+      ],
+      "unit_type": "cavalry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Quick Rest",
+        "description": "Reduce wait time while resting."
+      },
+      "class_trait": "2x physickal damage v. Infantry",
+      "stamina": 5,
+      "mobility": 300,
+      "promotes_to": "great_knight"
+    },
+    {
+      "id": "great_knight",
+      "name": "Great Knight",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "cavalry"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "shield",
+        "cavalry"
+      ],
+      "unit_type": "cavalry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Quick Rest",
+        "description": "Reduce wait time while resting."
+      },
+      "class_trait": "2x physickal damage v. Infantry",
+      "stamina": 5,
+      "mobility": 300,
+      "promotes_to": null
+    },
+    {
+      "id": "radiant_knight",
+      "name": "Radiant Knight",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "cavalry"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "shield",
+        "cavalry"
+      ],
+      "unit_type": "cavalry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Resist Magick Assist",
+        "description": "Take less damage from magick assists."
+      },
+      "class_trait": "2x physickal damage v. Infantry",
+      "stamina": 5,
+      "mobility": 300,
+      "promotes_to": "sainted_knight"
+    },
+    {
+      "id": "cleric",
+      "name": "Cleric",
+      "roles": [
+        "support"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "healing",
+      "leader_effect": {
+        "name": "Healing Assist",
+        "description": "Can provide healing assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 80,
+      "promotes_to": "bishop"
+    },
+    {
+      "id": "wizard",
+      "name": "Wizard",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "magick",
+      "leader_effect": {
+        "name": "Magick Assist",
+        "description": "Can provide magick assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 80,
+      "promotes_to": "warlock"
+    },
+    {
+      "id": "witch",
+      "name": "Witch",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "magick",
+      "leader_effect": {
+        "name": "Magick Assist",
+        "description": "Can provide magick assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 80,
+      "promotes_to": "sorceress"
+    },
+    {
+      "id": "shaman",
+      "name": "Shaman",
+      "roles": [
+        "support"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Resist Magick Assist",
+        "description": "Take less damage from magick assists."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 80,
+      "promotes_to": "druid"
+    },
+    {
+      "id": "gryphon_knight",
+      "name": "Gryphon Knight",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "flying"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "flying"
+      ],
+      "unit_type": "flying",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Flight",
+        "description": "Ignore terrain and trap effects when moving."
+      },
+      "class_trait": "2x dodge rate v. grounded melee / 2x phys. damage v. Cavalry",
+      "stamina": 4,
+      "mobility": 150,
+      "promotes_to": "gryphon_master"
+    },
+    {
+      "id": "feathersword",
+      "name": "Feathersword",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "flying"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "shield",
+        "flying",
+        "angel"
+      ],
+      "unit_type": "flying",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Flight",
+        "description": "Ignore terrain and trap effects when moving."
+      },
+      "class_trait": "2x dodge rate v. grounded melee",
+      "stamina": 4,
+      "mobility": 150,
+      "promotes_to": null
+    },
+    {
+      "id": "priestess",
+      "name": "Priestess",
+      "roles": [
+        "support"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "healing",
+      "leader_effect": {
+        "name": "Healing Assist",
+        "description": "Can provide healing assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": "high_priestess"
+    },
+    {
+      "id": "paladin",
+      "name": "Paladin",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "cavalry"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "shield",
+        "cavalry"
+      ],
+      "unit_type": "cavalry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Resist Magick Assist",
+        "description": "Take less damage from magick assists."
+      },
+      "class_trait": "2x physickal damage v. Infantry",
+      "stamina": 5,
+      "mobility": 300,
+      "promotes_to": null
+    }
+  ],
+  "class_lines": [
+    {
+      "id": "lord",
+      "classes": [
+        "lord"
+      ]
+    },
+    {
+      "id": "fighter",
+      "classes": [
+        "fighter"
+      ]
+    },
+    {
+      "id": "soldier",
+      "classes": [
+        "soldier"
+      ]
+    },
+    {
+      "id": "housecarl",
+      "classes": [
+        "housecarl"
+      ]
+    },
+    {
+      "id": "swordfighter",
+      "classes": [
+        "swordfighter"
+      ]
+    },
+    {
+      "id": "sellsword",
+      "classes": [
+        "sellsword"
+      ]
+    },
+    {
+      "id": "hoplite",
+      "classes": [
+        "hoplite"
+      ]
+    },
+    {
+      "id": "gladiator",
+      "classes": [
+        "gladiator"
+      ]
+    },
+    {
+      "id": "warrior",
+      "classes": [
+        "warrior"
+      ]
+    },
+    {
+      "id": "hunter",
+      "classes": [
+        "hunter"
+      ]
+    },
+    {
+      "id": "thief",
+      "classes": [
+        "thief"
+      ]
+    },
+    {
+      "id": "knight",
+      "classes": [
+        "knight"
+      ]
+    },
+    {
+      "id": "great_knight",
+      "classes": [
+        "great_knight"
+      ]
+    },
+    {
+      "id": "radiant_knight",
+      "classes": [
+        "radiant_knight"
+      ]
+    },
+    {
+      "id": "cleric",
+      "classes": [
+        "cleric"
+      ]
+    },
+    {
+      "id": "wizard",
+      "classes": [
+        "wizard"
+      ]
+    },
+    {
+      "id": "witch",
+      "classes": [
+        "witch"
+      ]
+    },
+    {
+      "id": "shaman",
+      "classes": [
+        "shaman"
+      ]
+    },
+    {
+      "id": "gryphon_knight",
+      "classes": [
+        "gryphon_knight"
+      ]
+    },
+    {
+      "id": "feathersword",
+      "classes": [
+        "feathersword"
+      ]
+    },
+    {
+      "id": "priestess",
+      "classes": [
+        "priestess"
+      ]
+    },
+    {
+      "id": "paladin",
+      "classes": [
+        "paladin"
+      ]
+    }
+  ],
+  "character_classes": {
+    "alain": {
+      "default_class": "lord",
+      "class_line": "lord"
+    },
+    "lex": {
+      "default_class": "fighter",
+      "class_line": "fighter"
+    },
+    "colm": {
+      "default_class": "fighter",
+      "class_line": "fighter"
+    },
+    "chloe": {
+      "default_class": "soldier",
+      "class_line": "soldier"
+    },
+    "aubin": {
+      "default_class": "housecarl",
+      "class_line": "housecarl"
+    },
+    "melisandre": {
+      "default_class": "swordfighter",
+      "class_line": "swordfighter"
+    },
+    "berenice": {
+      "default_class": "sellsword",
+      "class_line": "sellsword"
+    },
+    "hodrick": {
+      "default_class": "hoplite",
+      "class_line": "hoplite"
+    },
+    "bruno": {
+      "default_class": "gladiator",
+      "class_line": "gladiator"
+    },
+    "mordon": {
+      "default_class": "warrior",
+      "class_line": "warrior"
+    },
+    "kitra": {
+      "default_class": "warrior",
+      "class_line": "warrior"
+    },
+    "nina": {
+      "default_class": "warrior",
+      "class_line": "warrior"
+    },
+    "rolf": {
+      "default_class": "hunter",
+      "class_line": "hunter"
+    },
+    "travis": {
+      "default_class": "thief",
+      "class_line": "thief"
+    },
+    "clive": {
+      "default_class": "knight",
+      "class_line": "knight"
+    },
+    "adel": {
+      "default_class": "knight",
+      "class_line": "knight"
+    },
+    "renault": {
+      "default_class": "great_knight",
+      "class_line": "great_knight"
+    },
+    "miriam": {
+      "default_class": "radiant_knight",
+      "class_line": "radiant_knight"
+    },
+    "sharon": {
+      "default_class": "cleric",
+      "class_line": "cleric"
+    },
+    "auch": {
+      "default_class": "wizard",
+      "class_line": "wizard"
+    },
+    "yahna": {
+      "default_class": "witch",
+      "class_line": "witch"
+    },
+    "selvie": {
+      "default_class": "shaman",
+      "class_line": "shaman"
+    },
+    "fran": {
+      "default_class": "gryphon_knight",
+      "class_line": "gryphon_knight"
+    },
+    "ochlys": {
+      "default_class": "feathersword",
+      "class_line": "feathersword"
+    },
+    "scarlett": {
+      "default_class": "priestess",
+      "class_line": "priestess"
+    },
+    "josef": {
+      "default_class": "paladin",
+      "class_line": "paladin"
+    },
+    "monica": {
+      "default_class": "radiant_knight",
+      "class_line": "radiant_knight"
+    }
+  },
   "rapports": [
     {
       "id": "alain",
@@ -557,6 +1352,16 @@
         "sharon",
         "miriam",
         "lex"
+      ]
+    },
+    {
+      "id": "monica",
+      "pairs": [
+        "alain",
+        "clive",
+        "nina",
+        "selvie",
+        "melisandre"
       ]
     }
   ]

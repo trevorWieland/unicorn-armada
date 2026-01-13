@@ -1,0 +1,14 @@
+{
+  "role_weights": {
+    "frontline": 1.0,
+    "backline": 1.0,
+    "support": 1.0
+  },
+  "capability_weights": {
+    "assist": 0.5,
+    "archer": 0.5,
+    "cavalry": 0.5,
+    "caster": 0.5,
+    "flying": 0.5
+  }
+}

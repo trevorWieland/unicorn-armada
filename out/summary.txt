@@ -1,15 +1,16 @@
-Total rapports: 26
-Unit 1 (4 slots): 6 rapports
-alain, scarlett, lex, chloe
-Unit 2 (4 slots): 6 rapports
-clive, renault, josef, hodrick
-Unit 3 (4 slots): 4 rapports
-mordon, auch, berenice, rolf
-Unit 4 (4 slots): 4 rapports
-fran, miriam, selvie, kitra
-Unit 5 (4 slots): 3 rapports
-adel, colm, melisandre, yahna
-Unit 6 (4 slots): 3 rapports
-travis, sharon, bruno, ochlys
-Unassigned:
-aubin, nina
+Total rapports: 25
+Total combat score: 22.50
+Unit 1 (4 slots): 5 rapports, 3.50 combat
+alain, scarlett, melisandre, adel
+Unit 2 (4 slots): 6 rapports, 4.50 combat
+hodrick, josef, chloe, yahna
+Unit 3 (4 slots): 4 rapports, 3.50 combat
+fran, auch, berenice, kitra
+Unit 4 (4 slots): 4 rapports, 3.50 combat
+lex, ochlys, sharon, colm
+Unit 5 (4 slots): 3 rapports, 3.50 combat
+clive, mordon, rolf, renault
+Unit 6 (4 slots): 3 rapports, 3.00 combat
+travis, bruno, miriam, selvie
+Unit 7 (4 slots): 0 rapports, 1.00 combat
+nina, aubin

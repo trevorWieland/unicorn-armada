@@ -4,8 +4,10 @@ import csv
 import json
 from pathlib import Path
 
-from .models import Dataset
-from .utils import Pair, normalize_id, pair_key
+from pydantic import ValidationError
+
+from .models import CombatScoringConfig, Dataset
+from .utils import Pair, normalize_id, normalize_tag, pair_key
 
 
 class InputError(ValueError):
@@ -19,7 +21,20 @@ def load_dataset(path: Path) -> Dataset:
         raise InputError(f"Dataset not found: {path}") from exc
     except json.JSONDecodeError as exc:
         raise InputError(f"Dataset JSON is invalid: {path}") from exc
-    return Dataset.model_validate(data)
+    try:
+        return Dataset.model_validate(data)
+    except ValidationError as exc:
+        raise InputError(f"Dataset JSON failed validation: {path}") from exc
+
+
+def load_combat_scoring_json(path: Path) -> CombatScoringConfig:
+    try:
+        data = json.loads(path.read_text())
+    except FileNotFoundError as exc:
+        raise InputError(f"Combat scoring file not found: {path}") from exc
+    except json.JSONDecodeError as exc:
+        raise InputError(f"Combat scoring JSON is invalid: {path}") from exc
+    return CombatScoringConfig.model_validate(data)
 
 
 def load_units_json(path: Path) -> list[int]:
@@ -47,6 +62,46 @@ def parse_units_arg(value: str) -> list[int]:
     if not units:
         raise InputError("Units list cannot be empty")
     return units
+
+
+def load_character_classes_csv(path: Path) -> dict[str, str]:
+    try:
+        text = path.read_text()
+    except FileNotFoundError as exc:
+        raise InputError(f"Character classes file not found: {path}") from exc
+
+    rows = list(csv.reader(text.splitlines()))
+    if not rows:
+        return {}
+
+    header = [cell.strip().lower() for cell in rows[0]]
+    start_idx = 0
+    if (
+        len(header) >= 2
+        and header[0] in {"id", "character"}
+        and header[1]
+        in {
+            "class",
+            "class_id",
+        }
+    ):
+        start_idx = 1
+
+    mapping: dict[str, str] = {}
+    for row in rows[start_idx:]:
+        if len(row) < 2:
+            continue
+        character_id = normalize_id(row[0])
+        class_id = normalize_tag(row[1])
+        if not character_id or not class_id:
+            continue
+        existing = mapping.get(character_id)
+        if existing is not None and existing != class_id:
+            raise InputError(
+                f"Character classes contain conflicting entries for {character_id}"
+            )
+        mapping[character_id] = class_id
+    return mapping
 
 
 def load_roster_csv(path: Path) -> list[str]:
