@@ -1,0 +1,10 @@
+Combat benchmark
+Combat data: available
+Total combat score (assignments): n=200, failures=0, mean=23.17, p50=23.50, p75=24.00, p90=25.00
+Recommended minimum total: 24.00 (strict 25.00)
+Per-unit size benchmarks (n, mean, p75, p90):
+Size 2: n=2000, mean=2.25, p75=3.00, p90=3.50
+Size 3: n=2000, mean=2.82, p75=3.50, p90=4.00
+Size 4: n=2000, mean=3.21, p75=4.00, p90=4.50
+Size 5: n=2000, mean=3.57, p75=4.50, p90=4.50
+Size 6: n=2000, mean=3.87, p75=4.50, p90=5.00

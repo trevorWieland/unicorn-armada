@@ -121,6 +121,14 @@ def solve(
     assigned_set = {member for cluster in clusters for member in cluster.members}
     rapport_edges = {pair for pair in rapport_edges if pair.issubset(assigned_set)}
     blacklist = {pair for pair in blacklist if pair.issubset(assigned_set)}
+    cluster_size_total = sum(cluster.size for cluster in clusters)
+    if cluster_size_total != total_slots:
+        cluster_sizes = format_cluster_size_counts(clusters)
+        raise SolveError(
+            "Roster trimming failed to match unit slots "
+            f"(slots={total_slots}, remaining={cluster_size_total}, "
+            f"cluster_sizes={cluster_sizes})."
+        )
 
     cluster_rapports, cluster_conflicts = build_cluster_metrics(
         clusters, rapport_edges, blacklist
@@ -131,12 +139,15 @@ def solve(
     best_units: list[list[int]] | None = None
     best_score = -1
     best_combat_score = float("-inf")
+    assignment_failures = 0
+    combat_failures = 0
 
     for _ in range(max(1, restarts)):
         unit_states = generate_initial_assignment(
             clusters, units, cluster_rapports, cluster_conflicts, potentials, rng
         )
         if unit_states is None:
+            assignment_failures += 1
             continue
         unit_clusters = [state.clusters for state in unit_states]
         improve_by_swaps(
@@ -154,6 +165,7 @@ def solve(
             )
             combat_score = combat_score_fn(unit_members)
             if min_combat_score is not None and combat_score < min_combat_score:
+                combat_failures += 1
                 continue
         if total_score > best_score:
             best_score = total_score
@@ -167,6 +179,13 @@ def solve(
         if min_combat_score is not None:
             raise SolveError(
                 "Unable to find a valid unit assignment meeting combat score minimum"
+            )
+        if assignment_failures:
+            cluster_sizes = format_cluster_size_counts(clusters)
+            raise SolveError(
+                "Unable to find a valid unit assignment. "
+                f"Check unit sizes and whitelist/blacklist constraints "
+                f"(units={units}, cluster_sizes={cluster_sizes})."
             )
         raise SolveError("Unable to find a valid unit assignment")
 
@@ -283,6 +302,15 @@ def compute_cluster_potentials(
     return potentials
 
 
+def format_cluster_size_counts(clusters: list[Cluster]) -> str:
+    if not clusters:
+        return "none"
+    counts: dict[int, int] = {}
+    for cluster in clusters:
+        counts[cluster.size] = counts.get(cluster.size, 0) + 1
+    return ", ".join(f"{size}x{counts[size]}" for size in sorted(counts))
+
+
 def choose_clusters_to_drop(
     clusters: list[Cluster], rapport_edges: set[Pair], extra: int
 ) -> set[int]:
@@ -291,36 +319,28 @@ def choose_clusters_to_drop(
 
     potentials = compute_cluster_potentials(clusters, rapport_edges)
     dp_penalty = [float("inf")] * (extra + 1)
-    dp_choice: list[tuple[int, int] | None] = [None] * (extra + 1)
+    dp_choice: list[tuple[int, ...] | None] = [None] * (extra + 1)
     dp_penalty[0] = 0.0
+    dp_choice[0] = ()
 
     for idx, cluster in enumerate(clusters):
         size = cluster.size
         penalty = potentials[idx]
         for total in range(extra, size - 1, -1):
             prev = total - size
+            prev_choice = dp_choice[prev]
+            if prev_choice is None:
+                continue
             candidate = dp_penalty[prev] + penalty
             if candidate < dp_penalty[total]:
                 dp_penalty[total] = candidate
-                dp_choice[total] = (prev, idx)
+                dp_choice[total] = prev_choice + (idx,)
 
-    if dp_penalty[extra] == float("inf"):
+    selected = dp_choice[extra]
+    if selected is None:
         raise SolveError("Roster cannot be trimmed to fit unit slots with whitelist")
 
-    selected: set[int] = set()
-    current = extra
-    while current > 0:
-        choice = dp_choice[current]
-        if choice is None:
-            break
-        prev, idx = choice
-        selected.add(idx)
-        current = prev
-
-    if current != 0:
-        raise SolveError("Failed to reconstruct roster trimming choices")
-
-    return selected
+    return set(selected)
 
 
 def build_cluster_metrics(

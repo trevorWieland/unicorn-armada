@@ -139,6 +139,21 @@ uv run unicorn-rapport solve-units \
   --min-combat-score 6
 ```
 
+### Benchmarking combat scores
+
+Use `benchmark-units` to estimate what a "good" combat score looks like for your
+roster and unit sizes. It samples random valid assignments and random units of
+sizes 2-6 to produce percentile-based recommendations.
+
+```bash
+uv run unicorn-rapport benchmark-units \
+  --units 4,3,4,3,4,3
+```
+
+Outputs:
+- `out/benchmark.json`
+- `out/benchmark.txt`
+
 ### Combat Scoring JSON
 
 `config/combat_scoring.json`:

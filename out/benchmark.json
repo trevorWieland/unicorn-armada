@@ -1,0 +1,111 @@
+{
+  "combat_available": true,
+  "inputs": {
+    "seed": 0,
+    "units": [
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4
+    ],
+    "trials": 200,
+    "unit_samples": 2000
+  },
+  "sample_counts": {
+    "total_trials": 200,
+    "total_successes": 200,
+    "total_failures": 0
+  },
+  "total_score_stats": {
+    "count": 200,
+    "min": 19.0,
+    "max": 26.0,
+    "mean": 23.1725,
+    "p50": 23.5,
+    "p75": 24.0,
+    "p90": 25.0,
+    "std": 1.477834141573404
+  },
+  "recommended_min_total": 24.0,
+  "recommended_strict_total": 25.0,
+  "per_unit_size": {
+    "2": {
+      "stats": {
+        "count": 2000,
+        "min": 1.0,
+        "max": 4.0,
+        "mean": 2.2505,
+        "p50": 2.0,
+        "p75": 3.0,
+        "p90": 3.5,
+        "std": 0.904018666842671
+      },
+      "recommended_min": 3.0,
+      "recommended_strict": 3.5,
+      "samples": 2000
+    },
+    "3": {
+      "stats": {
+        "count": 2000,
+        "min": 1.0,
+        "max": 5.0,
+        "mean": 2.81625,
+        "p50": 3.0,
+        "p75": 3.5,
+        "p90": 4.0,
+        "std": 1.0098816452931503
+      },
+      "recommended_min": 3.5,
+      "recommended_strict": 4.0,
+      "samples": 2000
+    },
+    "4": {
+      "stats": {
+        "count": 2000,
+        "min": 1.0,
+        "max": 5.5,
+        "mean": 3.20925,
+        "p50": 3.5,
+        "p75": 4.0,
+        "p90": 4.5,
+        "std": 1.017393452652414
+      },
+      "recommended_min": 4.0,
+      "recommended_strict": 4.5,
+      "samples": 2000
+    },
+    "5": {
+      "stats": {
+        "count": 2000,
+        "min": 1.0,
+        "max": 5.5,
+        "mean": 3.5725,
+        "p50": 3.5,
+        "p75": 4.5,
+        "p90": 4.5,
+        "std": 0.981577174754996
+      },
+      "recommended_min": 4.5,
+      "recommended_strict": 4.5,
+      "samples": 2000
+    },
+    "6": {
+      "stats": {
+        "count": 2000,
+        "min": 1.0,
+        "max": 5.5,
+        "mean": 3.8685,
+        "p50": 4.0,
+        "p75": 4.5,
+        "p90": 5.0,
+        "std": 0.9169011669749363
+      },
+      "recommended_min": 4.5,
+      "recommended_strict": 5.0,
+      "samples": 2000
+    }
+  }
+}

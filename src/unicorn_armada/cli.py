@@ -1,10 +1,18 @@
 from __future__ import annotations
 
+import json
+import random
 from pathlib import Path
 from typing import Optional
 
 import typer
 
+from .benchmark import (
+    BenchmarkStats,
+    compute_stats,
+    generate_random_assignment,
+    sample_unit_scores,
+)
 from .combat import build_class_index, compute_combat_summary
 from .io import (
     InputError,
@@ -18,7 +26,7 @@ from .io import (
 )
 from .models import CombatScoringConfig
 from .solver import SolveError, solve
-from .utils import Pair, pair_key
+from .utils import Pair, normalize_id, pair_key
 
 
 app = typer.Typer(add_completion=False)
@@ -70,49 +78,125 @@ def write_summary(path: Path, solution, units: list[int]) -> None:
     path.write_text("\n".join(lines) + "\n")
 
 
-@app.command()
-def solve_units(
-    dataset: Optional[Path] = typer.Option(
-        None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
-    ),
-    roster: Optional[Path] = typer.Option(
-        None,
-        "--roster",
-        help="CSV of available character ids (default: config/roster.csv)",
-    ),
-    units: Optional[str] = typer.Option(
-        None,
-        "--units",
-        help="Comma-separated list of unit sizes (e.g. 4,3,4,3)",
-    ),
-    units_file: Optional[Path] = typer.Option(
-        None, "--units-file", help="JSON file containing unit sizes list"
-    ),
-    whitelist: Optional[Path] = typer.Option(
-        None,
-        "--whitelist",
-        help="CSV of required pairs (default: config/whitelist.csv)",
-    ),
-    blacklist: Optional[Path] = typer.Option(
-        None,
-        "--blacklist",
-        help="CSV of forbidden pairs (default: config/blacklist.csv)",
-    ),
-    seed: int = typer.Option(0, help="Random seed for deterministic output"),
-    restarts: int = typer.Option(50, help="Greedy restart attempts"),
-    swap_iterations: int = typer.Option(200, help="Swap-improvement iterations"),
-    min_combat_score: Optional[float] = typer.Option(
-        None,
-        "--min-combat-score",
-        help="Minimum total combat score required for a solution",
-    ),
-    out: Path = typer.Option(
-        Path("out/solution.json"), "--out", help="Output JSON path"
-    ),
-    summary: Path = typer.Option(
-        Path("out/summary.txt"), "--summary", help="Summary output path"
-    ),
-) -> None:
+def stats_to_dict(stats: BenchmarkStats) -> dict[str, float | int]:
+    return {
+        "count": stats.count,
+        "min": stats.minimum,
+        "max": stats.maximum,
+        "mean": stats.mean,
+        "p50": stats.median,
+        "p75": stats.p75,
+        "p90": stats.p90,
+        "std": stats.std,
+    }
+
+
+def normalize_rapport_entries(
+    rapport_entries: list[dict[str, object]],
+    character_ids: set[str],
+) -> tuple[list[dict[str, object]], dict[str, int]]:
+    id_order: list[str] = []
+    rapport_map: dict[str, list[str]] = {}
+    duplicate_entries = 0
+    skipped_self = 0
+    skipped_unknown = 0
+    unknown_entry_ids: set[str] = set()
+
+    for entry in rapport_entries:
+        if not isinstance(entry, dict):
+            continue
+        raw_id = normalize_id(str(entry.get("id", "")))
+        if not raw_id:
+            continue
+        if raw_id not in character_ids:
+            unknown_entry_ids.add(raw_id)
+        raw_pairs = entry.get("pairs") or []
+        if not isinstance(raw_pairs, list):
+            raise typer.BadParameter(
+                f"Rapport pairs for {raw_id} must be a list of ids"
+            )
+        cleaned_pairs: list[str] = []
+        seen: set[str] = set()
+        for partner in raw_pairs:
+            partner_id = normalize_id(str(partner))
+            if not partner_id:
+                continue
+            if partner_id == raw_id:
+                skipped_self += 1
+                continue
+            if partner_id in seen:
+                continue
+            seen.add(partner_id)
+            cleaned_pairs.append(partner_id)
+        if raw_id in rapport_map:
+            duplicate_entries += 1
+            existing = rapport_map[raw_id]
+            existing_set = set(existing)
+            for partner_id in cleaned_pairs:
+                if partner_id not in existing_set:
+                    existing.append(partner_id)
+                    existing_set.add(partner_id)
+        else:
+            rapport_map[raw_id] = cleaned_pairs
+            id_order.append(raw_id)
+
+    adjacency = {character_id: set() for character_id in character_ids}
+    for character_id, partners in rapport_map.items():
+        if character_id not in character_ids:
+            continue
+        for partner_id in partners:
+            if partner_id not in character_ids:
+                skipped_unknown += 1
+                continue
+            if partner_id == character_id:
+                skipped_self += 1
+                continue
+            adjacency[character_id].add(partner_id)
+            adjacency[partner_id].add(character_id)
+
+    normalized_entries: list[dict[str, object]] = []
+    added_pairs = 0
+    added_entries = 0
+
+    for character_id in id_order:
+        pairs = list(rapport_map.get(character_id, []))
+        if character_id in character_ids:
+            missing = sorted(adjacency[character_id] - set(pairs))
+            if missing:
+                pairs.extend(missing)
+                added_pairs += len(missing)
+        normalized_entries.append({"id": character_id, "pairs": pairs})
+
+    missing_ids = sorted(
+        character_id
+        for character_id in character_ids
+        if character_id not in rapport_map and adjacency[character_id]
+    )
+    for character_id in missing_ids:
+        partners = sorted(adjacency[character_id])
+        normalized_entries.append({"id": character_id, "pairs": partners})
+        added_entries += 1
+        added_pairs += len(partners)
+
+    stats = {
+        "added_pairs": added_pairs,
+        "added_entries": added_entries,
+        "duplicate_entries": duplicate_entries,
+        "skipped_self": skipped_self,
+        "skipped_unknown": skipped_unknown,
+        "unknown_entry_ids": len(unknown_entry_ids),
+    }
+    return normalized_entries, stats
+
+
+def load_problem_inputs(
+    dataset: Optional[Path],
+    roster: Optional[Path],
+    units: Optional[str],
+    units_file: Optional[Path],
+    whitelist: Optional[Path],
+    blacklist: Optional[Path],
+):
     dataset_path = dataset or DEFAULT_DATASET
     try:
         dataset_data = load_dataset(dataset_path)
@@ -219,6 +303,17 @@ def solve_units(
         typer.echo(f"Warning: ignoring blacklist pairs not in roster: {formatted}")
     blacklist_pairs = {pair for pair in blacklist_pairs if pair.issubset(roster_set)}
 
+    return (
+        dataset_data,
+        roster_ids,
+        unit_sizes,
+        rapport_edges,
+        whitelist_pairs,
+        blacklist_pairs,
+    )
+
+
+def load_combat_context(dataset_data, roster_set: set[str]):
     combat_scoring = CombatScoringConfig()
     if DEFAULT_COMBAT_SCORING.exists():
         try:
@@ -233,6 +328,7 @@ def solve_units(
         except InputError as exc:
             raise typer.BadParameter(str(exc)) from exc
 
+    character_set = {character.id for character in dataset_data.characters}
     unknown_override_characters = set(overrides) - character_set
     if unknown_override_characters:
         formatted = ", ".join(sorted(unknown_override_characters))
@@ -298,6 +394,64 @@ def solve_units(
                 f"Warning: missing default classes for roster characters: {formatted}"
             )
 
+    return combat_scoring, effective_classes
+
+
+@app.command()
+def solve_units(
+    dataset: Optional[Path] = typer.Option(
+        None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
+    ),
+    roster: Optional[Path] = typer.Option(
+        None,
+        "--roster",
+        help="CSV of available character ids (default: config/roster.csv)",
+    ),
+    units: Optional[str] = typer.Option(
+        None,
+        "--units",
+        help="Comma-separated list of unit sizes (e.g. 4,3,4,3)",
+    ),
+    units_file: Optional[Path] = typer.Option(
+        None, "--units-file", help="JSON file containing unit sizes list"
+    ),
+    whitelist: Optional[Path] = typer.Option(
+        None,
+        "--whitelist",
+        help="CSV of required pairs (default: config/whitelist.csv)",
+    ),
+    blacklist: Optional[Path] = typer.Option(
+        None,
+        "--blacklist",
+        help="CSV of forbidden pairs (default: config/blacklist.csv)",
+    ),
+    seed: int = typer.Option(0, help="Random seed for deterministic output"),
+    restarts: int = typer.Option(50, help="Greedy restart attempts"),
+    swap_iterations: int = typer.Option(200, help="Swap-improvement iterations"),
+    min_combat_score: Optional[float] = typer.Option(
+        None,
+        "--min-combat-score",
+        help="Minimum total combat score required for a solution",
+    ),
+    out: Path = typer.Option(
+        Path("out/solution.json"), "--out", help="Output JSON path"
+    ),
+    summary: Path = typer.Option(
+        Path("out/summary.txt"), "--summary", help="Summary output path"
+    ),
+) -> None:
+    (
+        dataset_data,
+        roster_ids,
+        unit_sizes,
+        rapport_edges,
+        whitelist_pairs,
+        blacklist_pairs,
+    ) = load_problem_inputs(dataset, roster, units, units_file, whitelist, blacklist)
+
+    roster_set = set(roster_ids)
+    combat_scoring, effective_classes = load_combat_context(dataset_data, roster_set)
+
     combat_score_fn = None
     if dataset_data.classes and effective_classes:
 
@@ -355,6 +509,228 @@ def solve_units(
     typer.echo(f"Total rapports: {solution.total_rapports}")
     typer.echo(f"Wrote solution to {out}")
     typer.echo(f"Wrote summary to {summary}")
+
+
+@app.command()
+def benchmark_units(
+    dataset: Optional[Path] = typer.Option(
+        None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
+    ),
+    roster: Optional[Path] = typer.Option(
+        None,
+        "--roster",
+        help="CSV of available character ids (default: config/roster.csv)",
+    ),
+    units: Optional[str] = typer.Option(
+        None,
+        "--units",
+        help="Comma-separated list of unit sizes (e.g. 4,3,4,3)",
+    ),
+    units_file: Optional[Path] = typer.Option(
+        None, "--units-file", help="JSON file containing unit sizes list"
+    ),
+    whitelist: Optional[Path] = typer.Option(
+        None,
+        "--whitelist",
+        help="CSV of required pairs (default: config/whitelist.csv)",
+    ),
+    blacklist: Optional[Path] = typer.Option(
+        None,
+        "--blacklist",
+        help="CSV of forbidden pairs (default: config/blacklist.csv)",
+    ),
+    seed: int = typer.Option(0, help="Random seed for deterministic output"),
+    trials: int = typer.Option(200, help="Full-assignment samples to generate"),
+    unit_samples: int = typer.Option(
+        2000, help="Random unit samples per size (2-6 slots)"
+    ),
+    out: Path = typer.Option(
+        Path("out/benchmark.json"), "--out", help="Output JSON path"
+    ),
+    summary: Path = typer.Option(
+        Path("out/benchmark.txt"), "--summary", help="Summary output path"
+    ),
+) -> None:
+    (
+        dataset_data,
+        roster_ids,
+        unit_sizes,
+        rapport_edges,
+        whitelist_pairs,
+        blacklist_pairs,
+    ) = load_problem_inputs(dataset, roster, units, units_file, whitelist, blacklist)
+
+    roster_set = set(roster_ids)
+    combat_scoring, effective_classes = load_combat_context(dataset_data, roster_set)
+
+    combat_available = bool(dataset_data.classes and effective_classes)
+    rng = random.Random(seed)
+
+    per_unit_size_stats: dict[str, BenchmarkStats] = {}
+    per_unit_size_report: dict[str, dict[str, object]] = {}
+    for size in range(2, 7):
+        values = []
+        if combat_available:
+            values = sample_unit_scores(
+                roster_ids,
+                size,
+                unit_samples,
+                rng,
+                effective_classes,
+                dataset_data.classes,
+                combat_scoring,
+            )
+        stats = compute_stats(values)
+        size_key = str(size)
+        per_unit_size_stats[size_key] = stats
+        per_unit_size_report[size_key] = {
+            "stats": stats_to_dict(stats),
+            "recommended_min": stats.p75,
+            "recommended_strict": stats.p90,
+            "samples": stats.count,
+        }
+
+    assignment_scores: list[float] = []
+    failures = 0
+    if combat_available:
+        for _ in range(trials):
+            try:
+                assignment = generate_random_assignment(
+                    roster_ids,
+                    unit_sizes,
+                    rapport_edges,
+                    whitelist_pairs,
+                    blacklist_pairs,
+                    rng,
+                )
+            except SolveError as exc:
+                raise typer.BadParameter(str(exc)) from exc
+            if assignment is None:
+                failures += 1
+                continue
+            score = compute_combat_summary(
+                assignment,
+                effective_classes,
+                dataset_data.classes,
+                combat_scoring,
+            ).total_score
+            assignment_scores.append(score)
+
+    total_stats = compute_stats(assignment_scores)
+
+    report = {
+        "combat_available": combat_available,
+        "inputs": {
+            "seed": seed,
+            "units": unit_sizes,
+            "trials": trials,
+            "unit_samples": unit_samples,
+        },
+        "sample_counts": {
+            "total_trials": trials,
+            "total_successes": total_stats.count,
+            "total_failures": failures,
+        },
+        "total_score_stats": stats_to_dict(total_stats),
+        "recommended_min_total": total_stats.p75,
+        "recommended_strict_total": total_stats.p90,
+        "per_unit_size": per_unit_size_report,
+    }
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, indent=2) + "\n")
+
+    summary.parent.mkdir(parents=True, exist_ok=True)
+    summary_lines = [
+        "Combat benchmark",
+        f"Combat data: {'available' if combat_available else 'missing'}",
+        (
+            "Total combat score (assignments): "
+            f"n={total_stats.count}, failures={failures}, "
+            f"mean={total_stats.mean:.2f}, p50={total_stats.median:.2f}, "
+            f"p75={total_stats.p75:.2f}, p90={total_stats.p90:.2f}"
+        ),
+        (
+            "Recommended minimum total: "
+            f"{total_stats.p75:.2f} (strict {total_stats.p90:.2f})"
+        ),
+        "Per-unit size benchmarks (n, mean, p75, p90):",
+    ]
+    if not combat_available:
+        summary_lines.append("Combat data missing; scores default to 0.")
+    for size in range(2, 7):
+        stats = per_unit_size_stats[str(size)]
+        summary_lines.append(
+            "Size "
+            f"{size}: n={stats.count}, mean={stats.mean:.2f}, "
+            f"p75={stats.p75:.2f}, p90={stats.p90:.2f}"
+        )
+    summary.write_text("\n".join(summary_lines) + "\n")
+
+    typer.echo(f"Wrote benchmark to {out}")
+    typer.echo(f"Wrote benchmark summary to {summary}")
+
+
+@app.command()
+def sync_rapports(
+    dataset: Optional[Path] = typer.Option(
+        None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
+    ),
+    out: Optional[Path] = typer.Option(
+        None,
+        "--out",
+        help="Output dataset JSON path (default: overwrite dataset file)",
+    ),
+) -> None:
+    dataset_path = dataset or DEFAULT_DATASET
+    try:
+        raw_data = json.loads(dataset_path.read_text())
+    except FileNotFoundError as exc:
+        raise typer.BadParameter(f"Dataset not found: {dataset_path}") from exc
+    except json.JSONDecodeError as exc:
+        raise typer.BadParameter(f"Dataset JSON is invalid: {dataset_path}") from exc
+
+    if not isinstance(raw_data, dict):
+        raise typer.BadParameter("Dataset JSON must be an object")
+
+    try:
+        dataset_data = load_dataset(dataset_path)
+    except InputError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+    raw_rapports = raw_data.get("rapports") or []
+    if not isinstance(raw_rapports, list):
+        raise typer.BadParameter("Dataset rapports must be a list")
+
+    character_ids = {character.id for character in dataset_data.characters}
+    normalized, stats = normalize_rapport_entries(raw_rapports, character_ids)
+
+    out_path = out or dataset_path
+    if normalized == raw_rapports and out_path == dataset_path:
+        typer.echo("Rapports already bidirectional; no changes needed.")
+        return
+
+    raw_data["rapports"] = normalized
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(raw_data, indent=2) + "\n")
+
+    typer.echo(f"Wrote cleaned dataset to {out_path}")
+    typer.echo(f"Added {stats['added_pairs']} reciprocal pairs.")
+    if stats["added_entries"]:
+        typer.echo(f"Added {stats['added_entries']} new rapport entries.")
+    if stats["duplicate_entries"]:
+        typer.echo(f"Collapsed {stats['duplicate_entries']} duplicate entries.")
+    if stats["skipped_self"]:
+        typer.echo(f"Removed {stats['skipped_self']} self-pairs.")
+    if stats["skipped_unknown"]:
+        typer.echo(
+            f"Ignored {stats['skipped_unknown']} pairs with unknown character ids."
+        )
+    if stats["unknown_entry_ids"]:
+        typer.echo(
+            f"Warning: {stats['unknown_entry_ids']} rapport entries "
+            "use unknown character ids."
+        )
 
 
 def main() -> None:

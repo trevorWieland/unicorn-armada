@@ -307,6 +307,32 @@
       "promotes_to": "high_lord"
     },
     {
+      "id": "high_lord",
+      "name": "High Lord",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "cavalry"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "shield",
+        "cavalry"
+      ],
+      "unit_type": "cavalry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Morale Boost",
+        "description": "Gain more Valor Points when defeating enemy units."
+      },
+      "class_trait": "2x physickal damage v. Infantry",
+      "stamina": 5,
+      "mobility": 300,
+      "promotes_to": null
+    },
+    {
       "id": "fighter",
       "name": "Fighter",
       "roles": [
@@ -330,6 +356,31 @@
       "stamina": 6,
       "mobility": 100,
       "promotes_to": "vanguard"
+    },
+    {
+      "id": "vanguard",
+      "name": "Vanguard",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "shield",
+        "infantry",
+        "armor"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Resist Ranged Assist",
+        "description": "Take less damage from ranged assists."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": null
     },
     {
       "id": "soldier",
@@ -494,6 +545,30 @@
       "stamina": 6,
       "mobility": 100,
       "promotes_to": "breaker"
+    },
+    {
+      "id": "dark_marquess_axe",
+      "name": "Dark Marquess (Axe)",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "greatshield",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Greater Garrison",
+        "description": "Recover HP and stamina faster when garrisoned."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": null
     },
     {
       "id": "hunter",
@@ -753,6 +828,31 @@
       "promotes_to": "gryphon_master"
     },
     {
+      "id": "gryphon_master",
+      "name": "Gryphon Master",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "flying"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "flying"
+      ],
+      "unit_type": "flying",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Flight",
+        "description": "Ignore terrain and trap effects when moving."
+      },
+      "class_trait": "2x dodge rate v. grounded melee / 2x phys. damage v. Cavalry",
+      "stamina": 4,
+      "mobility": 150,
+      "promotes_to": null
+    },
+    {
       "id": "feathersword",
       "name": "Feathersword",
       "roles": [
@@ -806,6 +906,86 @@
       "promotes_to": "high_priestess"
     },
     {
+      "id": "high_priestess",
+      "name": "High Priestess",
+      "roles": [
+        "support"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "healing",
+      "leader_effect": {
+        "name": "Healing Assist",
+        "description": "Can provide healing assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": null
+    },
+    {
+      "id": "crusader",
+      "name": "Crusader",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "infantry",
+        "caster",
+        "elven"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "magick",
+      "leader_effect": {
+        "name": "Magick Assist",
+        "description": "Can provide magick assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": "valkyria"
+    },
+    {
+      "id": "elven_augur",
+      "name": "Elven Augur",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "spear",
+        "infantry",
+        "caster",
+        "elven"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "magick",
+      "leader_effect": {
+        "name": "Magick Assist",
+        "description": "Can provide magick assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": null
+    },
+    {
       "id": "paladin",
       "name": "Paladin",
       "roles": [
@@ -836,13 +1016,15 @@
     {
       "id": "lord",
       "classes": [
-        "lord"
+        "lord",
+        "high_lord"
       ]
     },
     {
       "id": "fighter",
       "classes": [
-        "fighter"
+        "fighter",
+        "vanguard"
       ]
     },
     {
@@ -888,6 +1070,12 @@
       ]
     },
     {
+      "id": "dark_marquess_axe",
+      "classes": [
+        "dark_marquess_axe"
+      ]
+    },
+    {
       "id": "hunter",
       "classes": [
         "hunter"
@@ -902,7 +1090,8 @@
     {
       "id": "knight",
       "classes": [
-        "knight"
+        "knight",
+        "great_knight"
       ]
     },
     {
@@ -944,7 +1133,8 @@
     {
       "id": "gryphon_knight",
       "classes": [
-        "gryphon_knight"
+        "gryphon_knight",
+        "gryphon_master"
       ]
     },
     {
@@ -956,7 +1146,20 @@
     {
       "id": "priestess",
       "classes": [
-        "priestess"
+        "priestess",
+        "high_priestess"
+      ]
+    },
+    {
+      "id": "crusader",
+      "classes": [
+        "crusader"
+      ]
+    },
+    {
+      "id": "elven_augur",
+      "classes": [
+        "elven_augur"
       ]
     },
     {
@@ -992,6 +1195,14 @@
       "class_line": "swordfighter"
     },
     "berenice": {
+      "default_class": "sellsword",
+      "class_line": "sellsword"
+    },
+    "jeremy": {
+      "default_class": "sellsword",
+      "class_line": "sellsword"
+    },
+    "magellan": {
       "default_class": "sellsword",
       "class_line": "sellsword"
     },
@@ -1071,9 +1282,37 @@
       "default_class": "paladin",
       "class_line": "paladin"
     },
+    "virginia": {
+      "default_class": "crusader",
+      "class_line": "crusader"
+    },
+    "leah": {
+      "default_class": "swordfighter",
+      "class_line": "swordfighter"
+    },
+    "primm": {
+      "default_class": "cleric",
+      "class_line": "cleric"
+    },
+    "aramis": {
+      "default_class": "swordfighter",
+      "class_line": "swordfighter"
+    },
+    "berengaria": {
+      "default_class": "dark_marquess_axe",
+      "class_line": "dark_marquess_axe"
+    },
     "monica": {
       "default_class": "radiant_knight",
       "class_line": "radiant_knight"
+    },
+    "tatiana": {
+      "default_class": "cleric",
+      "class_line": "cleric"
+    },
+    "rosalinde": {
+      "default_class": "elven_augur",
+      "class_line": "elven_augur"
     }
   },
   "rapports": [
@@ -1362,6 +1601,90 @@
         "nina",
         "selvie",
         "melisandre"
+      ]
+    },
+    {
+      "id": "tatiana",
+      "pairs": [
+        "alain",
+        "lex",
+        "nina",
+        "josef",
+        "ochlys"
+      ]
+    },
+    {
+      "id": "rosalinde",
+      "pairs": [
+        "alain",
+        "lex",
+        "yahna",
+        "scarlett"
+      ]
+    },
+    {
+      "id": "virginia",
+      "pairs": [
+        "alain",
+        "josef",
+        "scarlett",
+        "leah",
+        "kitra",
+        "miriam",
+        "fran"
+      ]
+    },
+    {
+      "id": "leah",
+      "pairs": [
+        "alain",
+        "virginia"
+      ]
+    },
+    {
+      "id": "primm",
+      "pairs": [
+        "alain",
+        "travis",
+        "aramis"
+      ]
+    },
+    {
+      "id": "aramis",
+      "pairs": [
+        "alain",
+        "primm",
+        "travis",
+        "melisandre",
+        "virginia",
+        "leah"
+      ]
+    },
+    {
+      "id": "berengaria",
+      "pairs": [
+        "alain",
+        "bruno",
+        "travis",
+        "virginia",
+        "leah"
+      ]
+    },
+    {
+      "id": "jeremy",
+      "pairs": [
+        "alain",
+        "aubin",
+        "mordon",
+        "berenice"
+      ]
+    },
+    {
+      "id": "magellan",
+      "pairs": [
+        "alain",
+        "aubin",
+        "rosalinde"
       ]
     }
   ]
