@@ -128,6 +128,30 @@ Type - Infantry
 Assist Type - None
 Mobility - 100
 
+## Sergeant
+Boasts physickal attack skills to piece enemy columns.
+Can provide support to allies and heal wounds.
+Effective v. cavalry-based foes such as Knights.
+
+Promotes from Soldier
+
+### Class Type
+- Spear
+- Infantry
+
+### Class Trait
+None
+
+### Leader Effect
+Quick Rest:
+Reduce wait time while resting.
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 100
+
 ## Housecarl
 Boasts excellent Physickal Attack.
 Can lower enemy Physickal Defense.
@@ -151,12 +175,61 @@ Type - Infantry
 Assist Type - None
 Mobility - 100
 
+## Viking
+Boasts excellent Physickal Attack.
+Can lower enemy Physickal Defense.
+Can equip shields to bolster Physickal Defense.
+
+Promotes from Housecarl
+
+### Class Type
+- Axe
+- Shield
+- Infantry
+
+### Class Trait
+None
+
+### Leader Effect
+Barrier Breaker:
+Can break gates and barricades more easily.
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 100
+
 ## Swordfighter
 Boasts high Initiative, Critical Rate, and Evasion.
 Effective v. foes with high Evarion such as Thieves.
 Ineffective v. foes with high Accuracy such as Hunters
 
 Promotes to Swordmaster
+
+### Class Type
+- Sword
+- Infantry
+
+### Class Trait
+None
+
+### Leader Effect
+Greater Garrison:
+Recover HP and stamina faster when garrisoned.
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 100
+
+## Swordmaster
+Boasts high Initiative, Critical Rate, and Evasion.
+Effective v. foes with high Evarion such as Thieves.
+Ineffective v. foes with high Accuracy such as Hunters
+
+Promotes to Swordfighter
 
 ### Class Type
 - Sword
@@ -198,12 +271,63 @@ Type - Infantry
 Assist Type - None
 Mobility - 80
 
+## Landsknecht
+Boasts excellent Physickal Attack.
+Can strike at foes with powerful counterattaack skills.
+Can equip shields to bolster Physickal Defense.
+
+Promotes from Sellsword
+
+### Class Type
+- Sword
+- Shield
+- Infantry
+
+### Class Trait
+None
+
+### Leader Effect
+Greater Garrison:
+Recover HP and stamina faster when garrisoned.
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 80
+
 ## Hoplite
 Boasts excellent Physickal Defense.
 Possesses the ability to protext allies in battle.
 Ineffective v. anti-armor and magick attacks.
 
 Promotes to Legionnaire
+
+### Class Type
+- Spear
+- Greatshield
+- Infantry
+- Armor
+
+### Class Trait
+None
+
+### Leader Effect
+Resist Ranged Assist:
+Take less damage from ranged assists.
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 50
+
+## Legionnaire
+Boasts excellent Physickal Defense.
+Possesses the ability to protext allies in battle.
+Ineffective v. anti-armor and magick attacks.
+
+Promotes from Hoplite
 
 ### Class Type
 - Spear
@@ -248,12 +372,60 @@ Type - Infantry
 Assist Type - None
 Mobility - 80
 
+## Berserker
+Boasts physickal attack skills to hit an entire enemy row.
+High HP makes them pair well with Clerics.
+Their Physickal and Magick Defense are both quite low.
+
+Promotes from Gladiator
+
+### Class Type
+- Axe
+- Infantry
+
+### Class Trait
+None
+
+### Leader Effect
+Barrier Breaker:
+Can break gates and barricades more easily.
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 80
+
 ## Warrior
 Boasts excellent Physickal Attack.
 Possesses an array of anti-armor skills to strike at
 armored foes such as Fighters and Hoplites.
 
 Promotes to Breaker
+
+### Class Type
+- Axe
+- Infantry
+
+### Class Trait
+None
+
+### Leader Effect
+Barrier Breaker:
+Can break gates and barricades more easily.
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 100
+
+## Breaker
+Boasts excellent Physickal Attack.
+Possesses an array of anti-armor skills to strike at
+armored foes such as Fighters and Hoplites.
+
+Promotes from Warrior
 
 ### Class Type
 - Axe
@@ -297,6 +469,31 @@ Type - Infantry
 Assist Type - Ranged
 Mobility - 100
 
+## Sniper
+Boasts excellent Accuracy.
+Effective v. flying foes such as Gryphon Knights.
+Effective v. foes with high Evasion such as Thieves.
+
+Promotes from Hunter
+
+### Class Type
+- Bow
+- Infantry
+- Archer
+
+### Class Trait
+2x damage for bow attacks v. Flying
+
+### Leader Effect
+Ranged Assist:
+Can provide ranged assists for allied units.
+
+### Stats
+Stamina - 5
+Type - Infantry
+Assist Type - Ranged
+Mobility - 100
+
 ## Arbalist
 Boasts excellent Accuracy and Physickal Attack.
 Effective v. flying foes such as Gryphon Knights.
@@ -321,12 +518,63 @@ Type - Infantry
 Assist Type - Ranged
 Mobility - 100
 
+## Shieldshooter
+Boasts excellent Accuracy and Physickal Attack.
+Effective v. flying foes such as Gryphon Knights.
+Can equip greatshields to bolster Physickal Defense.
+
+Promotes from Shieldshooter
+
+### Class Type
+- Bow
+- Greatshield
+- Infantry
+- Archer
+
+### Class Trait
+2x damage for bow attacks v. Flying
+
+### Leader Effect
+Ranged Assist:
+Can provide ranged assists for allied units.
+
+### Stats
+Stamina - 5
+Type - Infantry
+Assist Type - Ranged
+Mobility - 80
+
 ## Thief
 Boasts excellent Evasion.
 Can steal PP and evade attacks without fail.
 Ineffective v. does with truestrike attacks.
 
 Promotes to Rogue
+
+### Class Type
+- Sword
+- Infantry
+- Scout
+
+### Class Trait
+None
+
+### Leader Effect
+Quick Rest:
+Reduce wait time while resting.
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 170
+
+## Rogue
+Boasts excellent Evasion.
+Can steal PP and evade attacks without fail.
+Ineffective v. does with truestrike attacks.
+
+Promotes from Thief
 
 ### Class Type
 - Sword
@@ -420,6 +668,30 @@ Type - Cavalry
 Assist Type - None
 Mobility - 300
 
+## Sainted Knight
+Boasts excellent Magick Defense.
+Ineffective v. flying foes such as Gryphon Knights.
+
+Promotes from Radiant Knight
+
+### Class Type
+- Sword
+- Shield
+- Cavalry
+
+### Class Trait
+2x physickal damage v. Infantry
+
+### Leader Effect
+Resist Magick Assist:
+Take less damage from magick assists.
+
+### Stats
+Stamina - 5
+Type - Cavalry
+Assist Type - None
+Mobility - 300
+
 ## Dark Knight
 Boasts skills that grow more powerful at low HP.
 Effective v. infantry-based foes such as Housecarls.
@@ -445,12 +717,62 @@ Type - Cavalry
 Assist Type - None
 Mobility - 300
 
+## Doom Knight
+Boasts skills that grow more powerful at low HP.
+Effective v. infantry-based foes such as Housecarls.
+Ineffective v. foes with anti-cavalry skills.
+
+Promotes from Dark Knight
+
+### Class Type
+- Axe
+- Shield
+- Cavalry
+
+### Class Trait
+2x physickal damage v. Infantry
+
+### Leader Effect
+Quick Rest:
+Reduce wait time while resting.
+
+### Stats
+Stamina - 5
+Type - Cavalry
+Assist Type - None
+Mobility - 300
+
 ## Cleric
 Supports allies with recovery and healing magick.
 Pairs well with allies boasting high HP such as
 Hoplites and Gladiators.
 
 Promotes to Bishop
+
+### Class Type
+- Staff
+- Infantry
+- Caster
+
+### Class Trait
+None
+
+### Leader Effect
+Healing Assist:
+Can provide healing assists for allied units.
+
+### Stats
+Stamina - 5
+Type - Infantry
+Assist Type - Healing
+Mobility - 80
+
+## Bishop
+Supports allies with recovery and healing magick.
+Pairs well with allies boasting high HP such as
+Hoplites and Gladiators.
+
+Promotes from Cleric
 
 ### Class Type
 - Staff
@@ -545,6 +867,31 @@ Type - Infantry
 Assist Type - Magick
 Mobility - 80
 
+## Sorceress
+Can imbue ally attacks with magick.
+Effective v. foes with low Magick Defense.
+Ineffective v. foes with high Magick Defense.
+
+Promotes from Witch
+
+### Class Type
+- Staff
+- Infantry
+- Caster
+
+### Class Trait
+None
+
+### Leader Effect
+Magick Assist:
+Can provide magick assists for allied units.
+
+### Stats
+Stamina - 5
+Type - Infantry
+Assist Type - Magick
+Mobility - 80
+
 ## Shaman
 Boasts the power to enfeeble foes.
 Can sap enemy PP to restrict their actions,
@@ -569,6 +916,80 @@ Stamina - 6
 Type - Infantry
 Assist Type - None
 Mobility - 80
+
+## Druid
+Boasts the power to enfeeble foes.
+Can sap enemy PP to restrict their actions,
+and can inflict weakening debuffs.
+
+Promotes from Shaman
+
+### Class Type
+- Staff
+- Infantry
+- Caster
+
+### Class Trait
+None
+
+### Leader Effect
+Resist Magick Assist:
+Take less damage from magick assists..
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 80
+
+## Wyvern Knight
+Boasts high Evasion, Attack, and Physickal Defense.
+Effective v. cavalry-based foes such as Knights.
+Ineffective v. foes with anti-flying skills.
+
+Promotes to Wyvern Master
+
+### Class Type
+- Spear
+- Flying
+
+### Class Trait
+2x dodge rate v. grounded melee / 2x phys. damage v. Cavalry
+
+### Leader Effect
+Flight:
+Ignore terrain and trap effects when moving.
+
+### Stats
+Stamina - 4
+Type - Flying
+Assist Type - None
+Mobility - 150
+
+## Wyvern Master
+Boasts high Evasion, Attack, and Physickal Defense.
+Effective v. cavalry-based foes such as Knights.
+Ineffective v. foes with anti-flying skills.
+
+Promotes from Wyvern Knight
+
+### Class Type
+- Spear
+- Flying
+
+### Class Trait
+2x dodge rate v. grounded melee / 2x phys. damage v. Cavalry
+
+### Leader Effect
+Flight:
+Ignore terrain and trap effects when moving.
+
+### Stats
+Stamina - 4
+Type - Flying
+Assist Type - None
+Mobility - 150
+
 
 ## Gryphon Knight
 Boasts high Evasion, Attack, and Magick Defense.
@@ -617,6 +1038,61 @@ Stamina - 4
 Type - Flying
 Assist Type - None
 Mobility - 150
+
+## Elven Fencer
+Boasts short-range magick attacks.
+Can protect allies from long-range physickal attacks,
+making them pair well with flying allies.
+
+Does not promote
+
+### Class Type
+- Sword
+- Infantry
+- Caster
+- Elven
+
+### Class Trait
+None
+
+### Leader Effect
+Magick Assist:
+Can provide magick assists for allied units.
+
+### Stats
+Stamina - 5
+Type - Infantry
+Assist Type - Magick
+Mobility - 100
+
+
+## Elven Archer
+Boasts long-range magick attacks.
+Can remove ally deuffs, making them
+effective v. Shamans
+
+Does not promote
+
+### Class Type
+- Bow
+- Infantry
+- Archer
+- Caster
+- Elven
+
+### Class Trait
+2x damage for bow attacks v. Flyin
+
+### Leader Effect
+Ranged Assist:
+Can provide ranged assists for allied units.
+
+### Stats
+Stamina - 5
+Type - Infantry
+Assist Type - Ranged
+Mobility - 100
+
 
 ## Feathersword
 Boasts excellent Evasion and Magick Defense.
@@ -720,6 +1196,58 @@ Type - Infantry
 Assist Type - Magick
 Mobility - 100
 
+## Valkyria
+A regal warrior bearing the blood of Cornia royalty.
+Can use anti-flying and anti-armored skills.
+Effective v. Gryphon Knights and Hoplites.
+
+Promotes to Crusader
+
+### Class Type
+- Spear
+- Infantry
+- Caster
+- Elven
+
+### Class Trait
+None
+
+### Leader Effect
+Magick Assist:
+Can provide magick assists for allied units.
+
+### Stats
+Stamina - 5
+Type - Infantry
+Assist Type - Magick
+Mobility - 100
+
+## Elven Sibyl
+The Turenos of Elheim, oracle of Ervelda.
+Excels at healing and support skills.
+Can summon faeries to strengthen other skills.
+
+Does not promote
+
+### Class Type
+- Spear
+- Infantry
+- Caster
+- Elven
+
+### Class Trait
+None
+
+### Leader Effect
+Healing Assist:
+Can provide healing assists for allied units.
+
+### Stats
+Stamina - 5
+Type - Infantry
+Assist Type - Healing
+Mobility - 100
+
 ## Elven Augur
 A priestess in service to the Turenos of Elheim.
 Excels at healing and support skills.
@@ -770,6 +1298,30 @@ Stamina - 5
 Type - Cavalry
 Assist Type - None
 Mobility - 300
+
+## Prince
+A warrior who bears the will to inherit the throne.
+Boasts excellent support skills,
+and can greatly strengthend allies.
+
+Does not promote
+
+### Class Type
+- Sword
+- Infantry
+
+### Class Trait
+None
+
+### Leader Effect
+Morale Boost:
+Gain more Valor Points when defeating enemy units.
+
+### Stats
+Stamina - 6
+Type - Infantry
+Assist Type - None
+Mobility - 100
 
 ## Dark Marquess (Axe)
 Servant and master of the forbidden axe arts.

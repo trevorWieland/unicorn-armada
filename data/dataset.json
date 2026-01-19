@@ -307,6 +307,29 @@
       "promotes_to": "high_lord"
     },
     {
+      "id": "prince",
+      "name": "Prince",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Morale Boost",
+        "description": "Gain more Valor Points when defeating enemy units."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": null
+    },
+    {
       "id": "high_lord",
       "name": "High Lord",
       "roles": [
@@ -407,6 +430,30 @@
       "promotes_to": "sergeant"
     },
     {
+      "id": "sergeant",
+      "name": "Sergeant",
+      "roles": [
+        "frontline",
+        "support"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Quick Rest",
+        "description": "Reduce wait time while resting."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": null
+    },
+    {
       "id": "housecarl",
       "name": "Housecarl",
       "roles": [
@@ -428,6 +475,30 @@
       "stamina": 6,
       "mobility": 100,
       "promotes_to": "viking"
+    },
+    {
+      "id": "viking",
+      "name": "Viking",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "shield",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Barrier Breaker",
+        "description": "Can break gates and barricades more easily."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": null
     },
     {
       "id": "swordfighter",
@@ -453,6 +524,29 @@
       "promotes_to": "swordmaster"
     },
     {
+      "id": "swordmaster",
+      "name": "Swordmaster",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Greater Garrison",
+        "description": "Recover HP and stamina faster when garrisoned."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": null
+    },
+    {
       "id": "sellsword",
       "name": "Sellsword",
       "roles": [
@@ -474,6 +568,30 @@
       "stamina": 6,
       "mobility": 80,
       "promotes_to": "landsknecht"
+    },
+    {
+      "id": "landsknecht",
+      "name": "Landsknecht",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "shield",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Greater Garrison",
+        "description": "Recover HP and stamina faster when garrisoned."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 80,
+      "promotes_to": null
     },
     {
       "id": "hoplite",
@@ -501,6 +619,31 @@
       "promotes_to": "legionnaire"
     },
     {
+      "id": "legionnaire",
+      "name": "Legionnaire",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "greatshield",
+        "infantry",
+        "armor"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Resist Ranged Assist",
+        "description": "Take less damage from ranged assists."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 50,
+      "promotes_to": null
+    },
+    {
       "id": "gladiator",
       "name": "Gladiator",
       "roles": [
@@ -524,6 +667,29 @@
       "promotes_to": "berserker"
     },
     {
+      "id": "berserker",
+      "name": "Berserker",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Barrier Breaker",
+        "description": "Can break gates and barricades more easily."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 80,
+      "promotes_to": null
+    },
+    {
       "id": "warrior",
       "name": "Warrior",
       "roles": [
@@ -545,6 +711,29 @@
       "stamina": 6,
       "mobility": 100,
       "promotes_to": "breaker"
+    },
+    {
+      "id": "breaker",
+      "name": "Breaker",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "infantry"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Barrier Breaker",
+        "description": "Can break gates and barricades more easily."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 100,
+      "promotes_to": null
     },
     {
       "id": "dark_marquess_axe",
@@ -597,6 +786,85 @@
       "promotes_to": "sniper"
     },
     {
+      "id": "sniper",
+      "name": "Sniper",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "archer"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "bow",
+        "infantry",
+        "archer"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "ranged",
+      "leader_effect": {
+        "name": "Ranged Assist",
+        "description": "Can provide ranged assists for allied units."
+      },
+      "class_trait": "2x damage for bow attacks v. Flying",
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": null
+    },
+    {
+      "id": "arbalist",
+      "name": "Arbalist",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "archer"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "bow",
+        "infantry",
+        "archer"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "ranged",
+      "leader_effect": {
+        "name": "Ranged Assist",
+        "description": "Can provide ranged assists for allied units."
+      },
+      "class_trait": "2x damage for bow attacks v. Flying",
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": "shieldshooter"
+    },
+    {
+      "id": "shieldshooter",
+      "name": "Shieldshooter",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "archer"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "bow",
+        "greatshield",
+        "infantry",
+        "archer"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "ranged",
+      "leader_effect": {
+        "name": "Ranged Assist",
+        "description": "Can provide ranged assists for allied units."
+      },
+      "class_trait": "2x damage for bow attacks v. Flying",
+      "stamina": 5,
+      "mobility": 80,
+      "promotes_to": null
+    },
+    {
       "id": "thief",
       "name": "Thief",
       "roles": [
@@ -619,6 +887,30 @@
       "stamina": 6,
       "mobility": 170,
       "promotes_to": "rogue"
+    },
+    {
+      "id": "rogue",
+      "name": "Rogue",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [],
+      "row_preference": "flex",
+      "class_types": [
+        "sword",
+        "infantry",
+        "scout"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Quick Rest",
+        "description": "Reduce wait time while resting."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 170,
+      "promotes_to": null
     },
     {
       "id": "knight",
@@ -699,6 +991,84 @@
       "promotes_to": "sainted_knight"
     },
     {
+      "id": "sainted_knight",
+      "name": "Sainted Knight",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "cavalry"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "shield",
+        "cavalry"
+      ],
+      "unit_type": "cavalry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Resist Magick Assist",
+        "description": "Take less damage from magick assists."
+      },
+      "class_trait": "2x physickal damage v. Infantry",
+      "stamina": 5,
+      "mobility": 300,
+      "promotes_to": null
+    },
+    {
+      "id": "dark_knight",
+      "name": "Dark Knight",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "cavalry"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "shield",
+        "cavalry"
+      ],
+      "unit_type": "cavalry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Quick Rest",
+        "description": "Reduce wait time while resting."
+      },
+      "class_trait": "2x physickal damage v. Infantry",
+      "stamina": 5,
+      "mobility": 300,
+      "promotes_to": "doom_knight"
+    },
+    {
+      "id": "doom_knight",
+      "name": "Doom Knight",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "cavalry"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "axe",
+        "shield",
+        "cavalry"
+      ],
+      "unit_type": "cavalry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Quick Rest",
+        "description": "Reduce wait time while resting."
+      },
+      "class_trait": "2x physickal damage v. Infantry",
+      "stamina": 5,
+      "mobility": 300,
+      "promotes_to": null
+    },
+    {
       "id": "cleric",
       "name": "Cleric",
       "roles": [
@@ -723,6 +1093,32 @@
       "stamina": 5,
       "mobility": 80,
       "promotes_to": "bishop"
+    },
+    {
+      "id": "bishop",
+      "name": "Bishop",
+      "roles": [
+        "support"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "healing",
+      "leader_effect": {
+        "name": "Healing Assist",
+        "description": "Can provide healing assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 80,
+      "promotes_to": null
     },
     {
       "id": "wizard",
@@ -751,6 +1147,32 @@
       "promotes_to": "warlock"
     },
     {
+      "id": "warlock",
+      "name": "Warlock",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "magick",
+      "leader_effect": {
+        "name": "Magick Assist",
+        "description": "Can provide magick assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 80,
+      "promotes_to": null
+    },
+    {
       "id": "witch",
       "name": "Witch",
       "roles": [
@@ -777,6 +1199,32 @@
       "promotes_to": "sorceress"
     },
     {
+      "id": "sorceress",
+      "name": "Sorceress",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "magick",
+      "leader_effect": {
+        "name": "Magick Assist",
+        "description": "Can provide magick assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 80,
+      "promotes_to": null
+    },
+    {
       "id": "shaman",
       "name": "Shaman",
       "roles": [
@@ -801,6 +1249,32 @@
       "stamina": 6,
       "mobility": 80,
       "promotes_to": "druid"
+    },
+    {
+      "id": "druid",
+      "name": "Druid",
+      "roles": [
+        "support"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "staff",
+        "infantry",
+        "caster"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Resist Magick Assist",
+        "description": "Take less damage from magick assists."
+      },
+      "class_trait": null,
+      "stamina": 6,
+      "mobility": 80,
+      "promotes_to": null
     },
     {
       "id": "gryphon_knight",
@@ -850,6 +1324,139 @@
       "class_trait": "2x dodge rate v. grounded melee / 2x phys. damage v. Cavalry",
       "stamina": 4,
       "mobility": 150,
+      "promotes_to": null
+    },
+    {
+      "id": "wyvern_knight",
+      "name": "Wyvern Knight",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "flying"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "flying"
+      ],
+      "unit_type": "flying",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Flight",
+        "description": "Ignore terrain and trap effects when moving."
+      },
+      "class_trait": "2x dodge rate v. grounded melee / 2x phys. damage v. Cavalry",
+      "stamina": 4,
+      "mobility": 150,
+      "promotes_to": "wyvern_master"
+    },
+    {
+      "id": "wyvern_master",
+      "name": "Wyvern Master",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "flying"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "flying"
+      ],
+      "unit_type": "flying",
+      "assist_type": "none",
+      "leader_effect": {
+        "name": "Flight",
+        "description": "Ignore terrain and trap effects when moving."
+      },
+      "class_trait": "2x dodge rate v. grounded melee / 2x phys. damage v. Cavalry",
+      "stamina": 4,
+      "mobility": 150,
+      "promotes_to": null
+    },
+    {
+      "id": "elven_archer",
+      "name": "Elven Archer",
+      "roles": [
+        "backline"
+      ],
+      "capabilities": [
+        "archer",
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "bow",
+        "infantry",
+        "archer",
+        "caster",
+        "elven"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "ranged",
+      "leader_effect": {
+        "name": "Ranged Assist",
+        "description": "Can provide ranged assists for allied units."
+      },
+      "class_trait": "2x damage for bow attacks v. Flying",
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": null
+    },
+    {
+      "id": "elven_sibyl",
+      "name": "Elven Sibyl",
+      "roles": [
+        "support"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "back",
+      "class_types": [
+        "spear",
+        "infantry",
+        "caster",
+        "elven"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "healing",
+      "leader_effect": {
+        "name": "Healing Assist",
+        "description": "Can provide healing assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": null
+    },
+    {
+      "id": "elven_fencer",
+      "name": "Elven Fencer",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "sword",
+        "infantry",
+        "caster",
+        "elven"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "magick",
+      "leader_effect": {
+        "name": "Magick Assist",
+        "description": "Can provide magick assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 100,
       "promotes_to": null
     },
     {
@@ -959,6 +1566,33 @@
       "promotes_to": "valkyria"
     },
     {
+      "id": "valkyria",
+      "name": "Valkyria",
+      "roles": [
+        "frontline"
+      ],
+      "capabilities": [
+        "caster"
+      ],
+      "row_preference": "front",
+      "class_types": [
+        "spear",
+        "infantry",
+        "caster",
+        "elven"
+      ],
+      "unit_type": "infantry",
+      "assist_type": "magick",
+      "leader_effect": {
+        "name": "Magick Assist",
+        "description": "Can provide magick assists for allied units."
+      },
+      "class_trait": null,
+      "stamina": 5,
+      "mobility": 100,
+      "promotes_to": null
+    },
+    {
       "id": "elven_augur",
       "name": "Elven Augur",
       "roles": [
@@ -1021,6 +1655,12 @@
       ]
     },
     {
+      "id": "prince",
+      "classes": [
+        "prince"
+      ]
+    },
+    {
       "id": "fighter",
       "classes": [
         "fighter",
@@ -1030,43 +1670,50 @@
     {
       "id": "soldier",
       "classes": [
-        "soldier"
+        "soldier",
+        "sergeant"
       ]
     },
     {
       "id": "housecarl",
       "classes": [
-        "housecarl"
+        "housecarl",
+        "viking"
       ]
     },
     {
       "id": "swordfighter",
       "classes": [
-        "swordfighter"
+        "swordfighter",
+        "swordmaster"
       ]
     },
     {
       "id": "sellsword",
       "classes": [
-        "sellsword"
+        "sellsword",
+        "landsknecht"
       ]
     },
     {
       "id": "hoplite",
       "classes": [
-        "hoplite"
+        "hoplite",
+        "legionnaire"
       ]
     },
     {
       "id": "gladiator",
       "classes": [
-        "gladiator"
+        "gladiator",
+        "berserker"
       ]
     },
     {
       "id": "warrior",
       "classes": [
-        "warrior"
+        "warrior",
+        "breaker"
       ]
     },
     {
@@ -1078,13 +1725,22 @@
     {
       "id": "hunter",
       "classes": [
-        "hunter"
+        "hunter",
+        "sniper"
+      ]
+    },
+    {
+      "id": "arbalist",
+      "classes": [
+        "arbalist",
+        "shieldshooter"
       ]
     },
     {
       "id": "thief",
       "classes": [
-        "thief"
+        "thief",
+        "rogue"
       ]
     },
     {
@@ -1103,31 +1759,43 @@
     {
       "id": "radiant_knight",
       "classes": [
-        "radiant_knight"
+        "radiant_knight",
+        "sainted_knight"
+      ]
+    },
+    {
+      "id": "dark_knight",
+      "classes": [
+        "dark_knight",
+        "doom_knight"
       ]
     },
     {
       "id": "cleric",
       "classes": [
-        "cleric"
+        "cleric",
+        "bishop"
       ]
     },
     {
       "id": "wizard",
       "classes": [
-        "wizard"
+        "wizard",
+        "warlock"
       ]
     },
     {
       "id": "witch",
       "classes": [
-        "witch"
+        "witch",
+        "sorceress"
       ]
     },
     {
       "id": "shaman",
       "classes": [
-        "shaman"
+        "shaman",
+        "druid"
       ]
     },
     {
@@ -1135,6 +1803,13 @@
       "classes": [
         "gryphon_knight",
         "gryphon_master"
+      ]
+    },
+    {
+      "id": "wyvern_knight",
+      "classes": [
+        "wyvern_knight",
+        "wyvern_master"
       ]
     },
     {
@@ -1153,13 +1828,32 @@
     {
       "id": "crusader",
       "classes": [
-        "crusader"
+        "crusader",
+        "valkyria"
       ]
     },
     {
       "id": "elven_augur",
       "classes": [
         "elven_augur"
+      ]
+    },
+    {
+      "id": "elven_archer",
+      "classes": [
+        "elven_archer"
+      ]
+    },
+    {
+      "id": "elven_sibyl",
+      "classes": [
+        "elven_sibyl"
+      ]
+    },
+    {
+      "id": "elven_fencer",
+      "classes": [
+        "elven_fencer"
       ]
     },
     {
@@ -1205,6 +1899,50 @@
     "magellan": {
       "default_class": "sellsword",
       "class_line": "sellsword"
+    },
+    "liza": {
+      "default_class": "arbalist",
+      "class_line": "arbalist"
+    },
+    "gloucester": {
+      "default_class": "dark_knight",
+      "class_line": "dark_knight"
+    },
+    "hilda": {
+      "default_class": "wyvern_knight",
+      "class_line": "wyvern_knight"
+    },
+    "gilbert": {
+      "default_class": "prince",
+      "class_line": "prince"
+    },
+    "ridiel": {
+      "default_class": "elven_archer",
+      "class_line": "elven_archer"
+    },
+    "gammel": {
+      "default_class": "rogue",
+      "class_line": "thief"
+    },
+    "mandrin": {
+      "default_class": "sniper",
+      "class_line": "hunter"
+    },
+    "celeste": {
+      "default_class": "gryphon_master",
+      "class_line": "gryphon_knight"
+    },
+    "lhinalagos": {
+      "default_class": "elven_archer",
+      "class_line": "elven_archer"
+    },
+    "ithilion": {
+      "default_class": "elven_fencer",
+      "class_line": "elven_fencer"
+    },
+    "eltolinde": {
+      "default_class": "elven_sibyl",
+      "class_line": "elven_sibyl"
     },
     "hodrick": {
       "default_class": "hoplite",
@@ -1329,7 +2067,7 @@
         "rolf",
         "bruno",
         "sharon",
-        "modron",
+        "mordon",
         "yahna",
         "berenice",
         "kitra",
@@ -1338,7 +2076,26 @@
         "scarlett",
         "auch",
         "selvie",
-        "ochlys"
+        "ochlys",
+        "adel",
+        "aramis",
+        "berengaria",
+        "colm",
+        "gloucester",
+        "jeremy",
+        "leah",
+        "liza",
+        "magellan",
+        "melisandre",
+        "monica",
+        "nina",
+        "primm",
+        "renault",
+        "ridiel",
+        "rosalinde",
+        "tatiana",
+        "virginia",
+        "hilda"
       ]
     },
     {
@@ -1347,7 +2104,10 @@
         "alain",
         "lex",
         "chloe",
-        "josef"
+        "josef",
+        "melisandre",
+        "rosalinde",
+        "virginia"
       ]
     },
     {
@@ -1360,7 +2120,10 @@
         "sharon",
         "selvie",
         "chloe",
-        "hodrick"
+        "hodrick",
+        "colm",
+        "rosalinde",
+        "tatiana"
       ]
     },
     {
@@ -1375,7 +2138,10 @@
         "yahna",
         "miriam",
         "scarlett",
-        "selvie"
+        "selvie",
+        "renault",
+        "tatiana",
+        "virginia"
       ]
     },
     {
@@ -1389,7 +2155,8 @@
         "josef",
         "rolf",
         "yahna",
-        "scarlett"
+        "scarlett",
+        "ridiel"
       ]
     },
     {
@@ -1400,7 +2167,8 @@
         "josef",
         "lex",
         "yahna",
-        "clive"
+        "clive",
+        "renault"
       ]
     },
     {
@@ -1412,7 +2180,11 @@
         "josef",
         "hodrick",
         "mordon",
-        "berenice"
+        "berenice",
+        "adel",
+        "liza",
+        "monica",
+        "renault"
       ]
     },
     {
@@ -1421,13 +2193,22 @@
         "alain",
         "chloe",
         "josef",
-        "bruno"
+        "bruno",
+        "aramis",
+        "berengaria",
+        "primm",
+        "ridiel"
       ]
     },
     {
       "id": "aubin",
       "pairs": [
-        "alain"
+        "alain",
+        "gloucester",
+        "jeremy",
+        "liza",
+        "magellan",
+        "ridiel"
       ]
     },
     {
@@ -1436,7 +2217,8 @@
         "alain",
         "chloe",
         "mordon",
-        "auch"
+        "auch",
+        "adel"
       ]
     },
     {
@@ -1447,7 +2229,8 @@
         "kitra",
         "selvie",
         "yahna",
-        "berenice"
+        "berenice",
+        "melisandre"
       ]
     },
     {
@@ -1456,7 +2239,8 @@
         "alain",
         "travis",
         "sharon",
-        "selvie"
+        "selvie",
+        "berengaria"
       ]
     },
     {
@@ -1466,7 +2250,9 @@
         "lex",
         "bruno",
         "ochlys",
-        "kitra"
+        "kitra",
+        "colm",
+        "liza"
       ]
     },
     {
@@ -1476,7 +2262,8 @@
         "clive",
         "rolf",
         "berenice",
-        "kitra"
+        "kitra",
+        "jeremy"
       ]
     },
     {
@@ -1484,7 +2271,9 @@
       "pairs": [
         "alain",
         "kitra",
-        "miriam"
+        "miriam",
+        "virginia",
+        "hilda"
       ]
     },
     {
@@ -1494,7 +2283,9 @@
         "kitra",
         "selvie",
         "josef",
-        "fran"
+        "fran",
+        "colm",
+        "virginia"
       ]
     },
     {
@@ -1506,14 +2297,16 @@
         "sharon",
         "auch",
         "berenice",
-        "miriam"
+        "miriam",
+        "virginia"
       ]
     },
     {
       "id": "ochlys",
       "pairs": [
         "alain",
-        "sharon"
+        "sharon",
+        "tatiana"
       ]
     },
     {
@@ -1523,7 +2316,10 @@
         "hodrick",
         "chloe",
         "josef",
-        "auch"
+        "auch",
+        "adel",
+        "nina",
+        "rosalinde"
       ]
     },
     {
@@ -1534,7 +2330,8 @@
         "miriam",
         "auch",
         "josef",
-        "bruno"
+        "bruno",
+        "monica"
       ]
     },
     {
@@ -1544,7 +2341,9 @@
         "mordon",
         "clive",
         "kitra",
-        "auch"
+        "auch",
+        "adel",
+        "jeremy"
       ]
     },
     {
@@ -1554,7 +2353,8 @@
         "rolf",
         "yahna",
         "berenice",
-        "clive"
+        "clive",
+        "melisandre"
       ]
     },
     {
@@ -1570,7 +2370,9 @@
       "id": "nina",
       "pairs": [
         "alain",
-        "yahna"
+        "yahna",
+        "monica",
+        "tatiana"
       ]
     },
     {
@@ -1580,7 +2382,10 @@
         "adel",
         "scarlett",
         "auch",
-        "colm"
+        "colm",
+        "aramis",
+        "liza",
+        "monica"
       ]
     },
     {
@@ -1600,7 +2405,8 @@
         "clive",
         "nina",
         "selvie",
-        "melisandre"
+        "melisandre",
+        "liza"
       ]
     },
     {
@@ -1610,7 +2416,9 @@
         "lex",
         "nina",
         "josef",
-        "ochlys"
+        "ochlys",
+        "ridiel",
+        "hilda"
       ]
     },
     {
@@ -1619,7 +2427,8 @@
         "alain",
         "lex",
         "yahna",
-        "scarlett"
+        "scarlett",
+        "magellan"
       ]
     },
     {
@@ -1631,14 +2440,18 @@
         "leah",
         "kitra",
         "miriam",
-        "fran"
+        "fran",
+        "aramis",
+        "berengaria"
       ]
     },
     {
       "id": "leah",
       "pairs": [
         "alain",
-        "virginia"
+        "virginia",
+        "aramis",
+        "berengaria"
       ]
     },
     {
@@ -1646,7 +2459,8 @@
       "pairs": [
         "alain",
         "travis",
-        "aramis"
+        "aramis",
+        "hilda"
       ]
     },
     {
@@ -1657,7 +2471,8 @@
         "travis",
         "melisandre",
         "virginia",
-        "leah"
+        "leah",
+        "gloucester"
       ]
     },
     {
@@ -1676,7 +2491,8 @@
         "alain",
         "aubin",
         "mordon",
-        "berenice"
+        "berenice",
+        "gloucester"
       ]
     },
     {
@@ -1684,6 +2500,122 @@
       "pairs": [
         "alain",
         "aubin",
+        "rosalinde",
+        "gloucester",
+        "liza",
+        "hilda"
+      ]
+    },
+    {
+      "id": "liza",
+      "pairs": [
+        "alain",
+        "aubin",
+        "magellan",
+        "clive",
+        "sharon",
+        "melisandre",
+        "monica"
+      ]
+    },
+    {
+      "id": "gloucester",
+      "pairs": [
+        "alain",
+        "aramis",
+        "jeremy",
+        "magellan",
+        "aubin"
+      ]
+    },
+    {
+      "id": "ridiel",
+      "pairs": [
+        "alain",
+        "aubin",
+        "travis",
+        "tatiana",
+        "chloe"
+      ]
+    },
+    {
+      "id": "hilda",
+      "pairs": [
+        "alain",
+        "primm",
+        "magellan",
+        "tatiana",
+        "fran"
+      ]
+    },
+    {
+      "id": "gilbert",
+      "pairs": [
+        "alain",
+        "travis",
+        "virginia",
+        "leah",
+        "aramis",
+        "jeremy",
+        "gloucester",
+        "berengaria"
+      ]
+    },
+    {
+      "id": "gammel",
+      "pairs": [
+        "alain",
+        "nina",
+        "celeste",
+        "rolf",
+        "mandrin"
+      ]
+    },
+    {
+      "id": "mandrin",
+      "pairs": [
+        "alain",
+        "tatiana",
+        "celeste",
+        "gammel",
+        "ochlys",
+        "rolf"
+      ]
+    },
+    {
+      "id": "celeste",
+      "pairs": [
+        "alain",
+        "adel",
+        "fran",
+        "mandrin",
+        "gammel"
+      ]
+    },
+    {
+      "id": "lhinalagos",
+      "pairs": [
+        "alain",
+        "mordon",
+        "ridiel"
+      ]
+    },
+    {
+      "id": "ithilion",
+      "pairs": [
+        "alain",
+        "rosalinde",
+        "lhinalagos",
+        "magellan"
+      ]
+    },
+    {
+      "id": "eltolinde",
+      "pairs": [
+        "alain",
+        "lhinalagos",
+        "lex",
+        "scarlett",
         "rosalinde"
       ]
     }
