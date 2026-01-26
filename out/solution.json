@@ -1,169 +1,159 @@
 {
   "units": [
     [
-      "leah",
-      "virginia",
+      "rolf",
+      "gammel",
+      "tatiana",
+      "adel",
+      "mandrin"
+    ],
+    [
       "alain",
+      "rosalinde",
+      "eltolinde",
       "scarlett"
     ],
     [
-      "clive",
-      "monica",
-      "melisandre",
-      "liza"
-    ],
-    [
-      "aramis",
-      "travis",
-      "primm",
-      "gilbert"
-    ],
-    [
-      "renault",
-      "josef",
+      "hodrick",
+      "yahna",
       "chloe",
-      "hodrick"
+      "josef"
     ],
     [
-      "colm",
-      "rosalinde",
-      "lex",
-      "sharon"
-    ],
-    [
-      "berenice",
-      "auch",
       "kitra",
-      "mordon"
+      "fran",
+      "miriam",
+      "virginia"
     ],
     [
+      "mordon",
+      "clive",
       "jeremy",
-      "magellan",
-      "gloucester",
-      "aubin"
-    ],
-    [
-      "hilda",
-      "tatiana",
-      "ridiel",
-      "fran"
+      "berenice"
     ],
     [
       "berengaria",
-      "miriam",
-      "selvie",
-      "bruno"
+      "gilbert",
+      "aramis",
+      "travis"
     ],
     [
-      "rolf",
-      "adel",
-      "nina",
-      "yahna"
+      "sharon",
+      "lex",
+      "railanor",
+      "colm"
+    ],
+    [
+      "magellan",
+      "aubin",
+      "liza",
+      "gloucester"
+    ],
+    [
+      "lhinalagos",
+      "ithilion",
+      "galadmir",
+      "ridiel"
+    ],
+    [
+      "melisandre",
+      "monica",
+      "selvie",
+      "auch"
     ]
   ],
   "unit_rapports": [
     5,
+    6,
+    6,
+    6,
     5,
     5,
     5,
-    4,
     5,
     5,
-    3,
-    3,
-    3
+    4
   ],
-  "total_rapports": 43,
+  "total_rapports": 52,
   "unassigned": [
-    "ochlys"
+    "bruno",
+    "celeste",
+    "hilda",
+    "leah",
+    "nina",
+    "ochlys",
+    "primm",
+    "renault"
   ],
   "seed": 0,
   "restarts": 50,
   "swap_iterations": 200,
   "combat": {
     "unit_scores": [
-      3.5,
-      3.5,
-      3.0,
-      2.5,
-      4.0,
+      5.0,
+      4.5,
+      4.5,
       3.0,
       1.5,
-      5.0,
+      1.0,
       3.0,
-      4.0
+      3.5,
+      3.5,
+      4.5
     ],
     "unit_breakdowns": [
       {
         "roles": {
-          "frontline": 3,
-          "support": 1
-        },
-        "capabilities": {
-          "assist": 2,
-          "caster": 2,
-          "cavalry": 1
-        },
-        "unknown_members": [],
-        "score": 3.5
-      },
-      {
-        "roles": {
-          "backline": 1,
-          "frontline": 3
-        },
-        "capabilities": {
-          "archer": 1,
-          "assist": 1,
-          "cavalry": 2
-        },
-        "unknown_members": [],
-        "score": 3.5
-      },
-      {
-        "roles": {
-          "frontline": 3,
-          "support": 1
-        },
-        "capabilities": {
-          "assist": 1,
-          "caster": 1
-        },
-        "unknown_members": [],
-        "score": 3.0
-      },
-      {
-        "roles": {
-          "frontline": 4,
-          "support": 1
-        },
-        "capabilities": {
-          "cavalry": 2
-        },
-        "unknown_members": [],
-        "score": 2.5
-      },
-      {
-        "roles": {
-          "backline": 1,
+          "backline": 2,
           "frontline": 2,
           "support": 1
         },
         "capabilities": {
-          "assist": 2,
-          "caster": 2
+          "archer": 2,
+          "assist": 3,
+          "caster": 1,
+          "cavalry": 1
         },
         "unknown_members": [],
-        "score": 4.0
+        "score": 5.0
       },
       {
         "roles": {
           "backline": 1,
-          "frontline": 3
+          "frontline": 1,
+          "support": 2
+        },
+        "capabilities": {
+          "assist": 3,
+          "caster": 3,
+          "cavalry": 1
+        },
+        "unknown_members": [],
+        "score": 4.5
+      },
+      {
+        "roles": {
+          "backline": 1,
+          "frontline": 3,
+          "support": 1
         },
         "capabilities": {
           "assist": 1,
-          "caster": 1
+          "caster": 1,
+          "cavalry": 1
+        },
+        "unknown_members": [],
+        "score": 4.5
+      },
+      {
+        "roles": {
+          "frontline": 4
+        },
+        "capabilities": {
+          "assist": 1,
+          "caster": 1,
+          "cavalry": 1,
+          "flying": 1
         },
         "unknown_members": [],
         "score": 3.0
@@ -180,18 +170,11 @@
       },
       {
         "roles": {
-          "backline": 1,
-          "frontline": 2,
-          "support": 1
+          "frontline": 4
         },
-        "capabilities": {
-          "archer": 1,
-          "assist": 2,
-          "caster": 2,
-          "flying": 2
-        },
+        "capabilities": {},
         "unknown_members": [],
-        "score": 5.0
+        "score": 1.0
       },
       {
         "roles": {
@@ -199,27 +182,53 @@
           "support": 1
         },
         "capabilities": {
-          "caster": 1,
-          "cavalry": 1
+          "assist": 2,
+          "caster": 2
         },
         "unknown_members": [],
         "score": 3.0
       },
       {
         "roles": {
-          "backline": 2,
-          "frontline": 2
+          "backline": 1,
+          "frontline": 3
         },
         "capabilities": {
           "archer": 1,
-          "assist": 2,
-          "caster": 1,
+          "assist": 1,
           "cavalry": 1
         },
         "unknown_members": [],
-        "score": 4.0
+        "score": 3.5
+      },
+      {
+        "roles": {
+          "backline": 3,
+          "frontline": 1
+        },
+        "capabilities": {
+          "archer": 3,
+          "assist": 4,
+          "caster": 4
+        },
+        "unknown_members": [],
+        "score": 3.5
+      },
+      {
+        "roles": {
+          "backline": 1,
+          "frontline": 2,
+          "support": 1
+        },
+        "capabilities": {
+          "assist": 1,
+          "caster": 2,
+          "cavalry": 1
+        },
+        "unknown_members": [],
+        "score": 4.5
       }
     ],
-    "total_score": 33.0
+    "total_score": 34.0
   }
 }

@@ -2051,6 +2051,14 @@
     "rosalinde": {
       "default_class": "elven_augur",
       "class_line": "elven_augur"
+    },
+    "railanor": {
+      "default_class": "elven_fencer",
+      "class_line": "elven_fencer"
+    },
+    "galadmir": {
+      "default_class": "elven_archer",
+      "class_line": "elven_archer"
     }
   },
   "rapports": [
@@ -2095,7 +2103,16 @@
         "rosalinde",
         "tatiana",
         "virginia",
-        "hilda"
+        "hilda",
+        "celeste",
+        "eltolinde",
+        "galadmir",
+        "gammel",
+        "gilbert",
+        "ithilion",
+        "lhinalagos",
+        "mandrin",
+        "railanor"
       ]
     },
     {
@@ -2107,7 +2124,8 @@
         "josef",
         "melisandre",
         "rosalinde",
-        "virginia"
+        "virginia",
+        "eltolinde"
       ]
     },
     {
@@ -2123,7 +2141,9 @@
         "hodrick",
         "colm",
         "rosalinde",
-        "tatiana"
+        "tatiana",
+        "eltolinde",
+        "railanor"
       ]
     },
     {
@@ -2197,7 +2217,8 @@
         "aramis",
         "berengaria",
         "primm",
-        "ridiel"
+        "ridiel",
+        "gilbert"
       ]
     },
     {
@@ -2218,7 +2239,9 @@
         "chloe",
         "mordon",
         "auch",
-        "adel"
+        "adel",
+        "gammel",
+        "mandrin"
       ]
     },
     {
@@ -2263,7 +2286,8 @@
         "rolf",
         "berenice",
         "kitra",
-        "jeremy"
+        "jeremy",
+        "lhinalagos"
       ]
     },
     {
@@ -2273,7 +2297,8 @@
         "kitra",
         "miriam",
         "virginia",
-        "hilda"
+        "hilda",
+        "celeste"
       ]
     },
     {
@@ -2306,7 +2331,8 @@
       "pairs": [
         "alain",
         "sharon",
-        "tatiana"
+        "tatiana",
+        "mandrin"
       ]
     },
     {
@@ -2354,7 +2380,8 @@
         "yahna",
         "berenice",
         "clive",
-        "melisandre"
+        "melisandre",
+        "celeste"
       ]
     },
     {
@@ -2372,7 +2399,8 @@
         "alain",
         "yahna",
         "monica",
-        "tatiana"
+        "tatiana",
+        "gammel"
       ]
     },
     {
@@ -2395,7 +2423,8 @@
         "melisandre",
         "sharon",
         "miriam",
-        "lex"
+        "lex",
+        "railanor"
       ]
     },
     {
@@ -2418,7 +2447,8 @@
         "josef",
         "ochlys",
         "ridiel",
-        "hilda"
+        "hilda",
+        "mandrin"
       ]
     },
     {
@@ -2428,7 +2458,10 @@
         "lex",
         "yahna",
         "scarlett",
-        "magellan"
+        "magellan",
+        "eltolinde",
+        "ithilion",
+        "railanor"
       ]
     },
     {
@@ -2442,7 +2475,8 @@
         "miriam",
         "fran",
         "aramis",
-        "berengaria"
+        "berengaria",
+        "gilbert"
       ]
     },
     {
@@ -2451,7 +2485,8 @@
         "alain",
         "virginia",
         "aramis",
-        "berengaria"
+        "berengaria",
+        "gilbert"
       ]
     },
     {
@@ -2472,7 +2507,8 @@
         "melisandre",
         "virginia",
         "leah",
-        "gloucester"
+        "gloucester",
+        "gilbert"
       ]
     },
     {
@@ -2482,7 +2518,8 @@
         "bruno",
         "travis",
         "virginia",
-        "leah"
+        "leah",
+        "gilbert"
       ]
     },
     {
@@ -2492,7 +2529,8 @@
         "aubin",
         "mordon",
         "berenice",
-        "gloucester"
+        "gloucester",
+        "gilbert"
       ]
     },
     {
@@ -2503,7 +2541,8 @@
         "rosalinde",
         "gloucester",
         "liza",
-        "hilda"
+        "hilda",
+        "ithilion"
       ]
     },
     {
@@ -2525,7 +2564,8 @@
         "aramis",
         "jeremy",
         "magellan",
-        "aubin"
+        "aubin",
+        "gilbert"
       ]
     },
     {
@@ -2535,7 +2575,9 @@
         "aubin",
         "travis",
         "tatiana",
-        "chloe"
+        "chloe",
+        "galadmir",
+        "lhinalagos"
       ]
     },
     {
@@ -2568,7 +2610,8 @@
         "nina",
         "celeste",
         "rolf",
-        "mandrin"
+        "mandrin",
+        "galadmir"
       ]
     },
     {
@@ -2597,7 +2640,10 @@
       "pairs": [
         "alain",
         "mordon",
-        "ridiel"
+        "ridiel",
+        "eltolinde",
+        "galadmir",
+        "ithilion"
       ]
     },
     {
@@ -2606,7 +2652,9 @@
         "alain",
         "rosalinde",
         "lhinalagos",
-        "magellan"
+        "magellan",
+        "galadmir",
+        "railanor"
       ]
     },
     {
@@ -2616,7 +2664,29 @@
         "lhinalagos",
         "lex",
         "scarlett",
-        "rosalinde"
+        "rosalinde",
+        "galadmir"
+      ]
+    },
+    {
+      "id": "railanor",
+      "pairs": [
+        "alain",
+        "lex",
+        "rosalinde",
+        "colm",
+        "ithilion"
+      ]
+    },
+    {
+      "id": "galadmir",
+      "pairs": [
+        "alain",
+        "ithilion",
+        "eltolinde",
+        "lhinalagos",
+        "ridiel",
+        "gammel"
       ]
     }
   ]

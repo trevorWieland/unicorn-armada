@@ -1,24 +1,24 @@
-Total rapports: 43
-Total combat score: 33.00
-Unit 1 (4 slots): 5 rapports, 3.50 combat
-leah, virginia, alain, scarlett
-Unit 2 (4 slots): 5 rapports, 3.50 combat
-clive, monica, melisandre, liza
-Unit 3 (4 slots): 5 rapports, 3.00 combat
-aramis, travis, primm, gilbert
-Unit 4 (4 slots): 5 rapports, 2.50 combat
-renault, josef, chloe, hodrick
-Unit 5 (4 slots): 4 rapports, 4.00 combat
-colm, rosalinde, lex, sharon
-Unit 6 (4 slots): 5 rapports, 3.00 combat
-berenice, auch, kitra, mordon
-Unit 7 (4 slots): 5 rapports, 1.50 combat
-jeremy, magellan, gloucester, aubin
-Unit 8 (4 slots): 3 rapports, 5.00 combat
-hilda, tatiana, ridiel, fran
-Unit 9 (4 slots): 3 rapports, 3.00 combat
-berengaria, miriam, selvie, bruno
-Unit 10 (4 slots): 3 rapports, 4.00 combat
-rolf, adel, nina, yahna
+Total rapports: 52
+Total combat score: 34.00
+Unit 1 (5 slots): 5 rapports, 5.00 combat
+rolf, gammel, tatiana, adel, mandrin
+Unit 2 (4 slots): 6 rapports, 4.50 combat
+alain, rosalinde, eltolinde, scarlett
+Unit 3 (4 slots): 6 rapports, 4.50 combat
+hodrick, yahna, chloe, josef
+Unit 4 (4 slots): 6 rapports, 3.00 combat
+kitra, fran, miriam, virginia
+Unit 5 (4 slots): 5 rapports, 1.50 combat
+mordon, clive, jeremy, berenice
+Unit 6 (4 slots): 5 rapports, 1.00 combat
+berengaria, gilbert, aramis, travis
+Unit 7 (4 slots): 5 rapports, 3.00 combat
+sharon, lex, railanor, colm
+Unit 8 (4 slots): 5 rapports, 3.50 combat
+magellan, aubin, liza, gloucester
+Unit 9 (4 slots): 5 rapports, 3.50 combat
+lhinalagos, ithilion, galadmir, ridiel
+Unit 10 (4 slots): 4 rapports, 4.50 combat
+melisandre, monica, selvie, auch
 Unassigned:
-ochlys
+bruno, celeste, hilda, leah, nina, ochlys, primm, renault
