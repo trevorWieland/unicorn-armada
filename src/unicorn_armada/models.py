@@ -46,6 +46,14 @@ def _normalize_identifier(value: str, field_name: str) -> str:
     return cleaned
 
 
+DiagnosticSeverity = Literal["warning", "error"]
+DiagnosticCode = Literal[
+    "missing_class_mapping",
+    "unknown_class_id",
+    "missing_default_classes",
+]
+
+
 class Character(BaseModel):
     """A game character."""
 
@@ -245,6 +253,28 @@ class ClassDefinition(BaseModel):
         return _normalize_identifier(str(value), "promotes_to")
 
 
+class ClassContext(BaseModel):
+    """Normalized class context for scoring."""
+
+    class_id: Annotated[str, Field(min_length=1, description="Class identifier")]
+    roles: list[str] = Field(default_factory=list, description="Normalized role tags")
+    capabilities: list[str] = Field(
+        default_factory=list, description="Normalized capability tags"
+    )
+    class_types: list[str] = Field(
+        default_factory=list, description="Normalized class type tags"
+    )
+    unit_type: Literal["infantry", "cavalry", "flying"] = Field(
+        ..., description="Movement and unit type category"
+    )
+    assist_type: Literal["none", "ranged", "magick", "healing"] = Field(
+        ..., description="Type of assist attacks this class provides"
+    )
+    has_leader_effect: bool = Field(
+        False, description="Whether class has a leader effect"
+    )
+
+
 class ClassLine(BaseModel):
     """A promotion line of related classes."""
 
@@ -346,10 +376,12 @@ class CombatScoringConfig(BaseModel):
         default_factory=dict, description="Weights for capabilities"
     )
     coverage: CoverageWeights = Field(
-        default_factory=CoverageWeights, description="Coverage scoring configuration"
+        default_factory=lambda: CoverageWeights(),
+        description="Coverage scoring configuration",
     )
     diversity: DiversityWeights = Field(
-        default_factory=DiversityWeights, description="Diversity scoring configuration"
+        default_factory=lambda: DiversityWeights(),
+        description="Diversity scoring configuration",
     )
 
     @field_validator("role_weights", mode="before")
@@ -363,6 +395,17 @@ class CombatScoringConfig(BaseModel):
         cls, value: dict[str, float] | None
     ) -> dict[str, float]:
         return _normalize_weights(value, "capability_weights")
+
+
+class CombatDiagnostic(BaseModel):
+    """Diagnostic emitted during combat scoring."""
+
+    code: DiagnosticCode = Field(..., description="Diagnostic code")
+    severity: DiagnosticSeverity = Field(..., description="Diagnostic severity")
+    message: Annotated[str, Field(min_length=1, description="Diagnostic message")]
+    subject: str | None = Field(
+        None, description="Subject identifier for the diagnostic"
+    )
 
 
 class CombatUnitBreakdown(BaseModel):
@@ -417,10 +460,12 @@ class CombatSummary(BaseModel):
     )
     total_score: float = Field(0.0, description="Sum of unit combat scores")
     coverage: CoverageSummary = Field(
-        default_factory=CoverageSummary, description="Army coverage summary"
+        default_factory=lambda: CoverageSummary(),
+        description="Army coverage summary",
     )
     diversity: DiversitySummary = Field(
-        default_factory=DiversitySummary, description="Leader diversity summary"
+        default_factory=lambda: DiversitySummary(),
+        description="Leader diversity summary",
     )
 
     @property

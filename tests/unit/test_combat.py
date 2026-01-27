@@ -7,10 +7,14 @@ import pytest
 from unicorn_armada.combat import (
     _count_unit_tags,
     _score_unit_tags,
+    build_class_context_index,
     build_class_index,
     compute_army_coverage,
     compute_combat_summary,
     compute_leader_diversity,
+    format_diagnostic,
+    missing_class_mapping_diagnostic,
+    missing_default_classes_diagnostic,
     select_leader_for_unit,
 )
 from unicorn_armada.models import (
@@ -172,6 +176,44 @@ class TestBuildClassIndex:
         ]
         index = build_class_index(classes)
         assert index["knight"].roles == ["second"]
+
+
+class TestBuildClassContextIndex:
+    """Tests for build_class_context_index function."""
+
+    def test_derives_capabilities(self, sample_classes: list[ClassDefinition]) -> None:
+        """Derived capabilities should be added consistently."""
+        index = build_class_context_index(sample_classes)
+
+        archer = index["archer"]
+        assert "assist" in archer.capabilities
+        assert "archer" in archer.capabilities
+
+        cavalry = index["cavalry"]
+        assert "cavalry" in cavalry.capabilities
+
+        pegasus = index["pegasus"]
+        assert "assist" in pegasus.capabilities
+        assert "flying" in pegasus.capabilities
+        assert "archer" not in pegasus.capabilities
+        assert "caster" not in pegasus.capabilities
+
+
+class TestCombatDiagnostics:
+    """Tests for combat diagnostics formatting."""
+
+    def test_formats_warning(self) -> None:
+        """Warning diagnostics should be prefixed in output."""
+        diagnostic = missing_default_classes_diagnostic({"bob", "alice"})
+        assert (
+            format_diagnostic(diagnostic)
+            == "Warning: missing default classes for roster characters: alice, bob"
+        )
+
+    def test_formats_error(self) -> None:
+        """Error diagnostics should keep the raw message."""
+        diagnostic = missing_class_mapping_diagnostic("alice")
+        assert format_diagnostic(diagnostic) == "Character 'alice' has no class mapping"
 
 
 # --- Tests for _count_unit_tags ---

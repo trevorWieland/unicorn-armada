@@ -13,7 +13,12 @@ from .benchmark import (
     generate_random_assignment,
     sample_unit_scores,
 )
-from .combat import build_class_index, compute_combat_summary
+from .combat import (
+    build_class_index,
+    compute_combat_summary,
+    format_diagnostic,
+    missing_default_classes_diagnostic,
+)
 from .io import (
     InputError,
     load_character_classes_csv,
@@ -445,10 +450,8 @@ def load_combat_context(dataset_data, roster_set: set[str]):
     if dataset_data.classes and dataset_data.character_classes:
         missing_defaults = roster_set - set(effective_classes)
         if missing_defaults:
-            formatted = ", ".join(sorted(missing_defaults))
-            typer.echo(
-                f"Warning: missing default classes for roster characters: {formatted}"
-            )
+            diagnostic = missing_default_classes_diagnostic(missing_defaults)
+            typer.echo(format_diagnostic(diagnostic))
 
     return combat_scoring, effective_classes
 
