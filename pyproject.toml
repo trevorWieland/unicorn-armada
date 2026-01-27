@@ -26,6 +26,9 @@ where = ["src"]
 dev = [
     "ruff>=0.14.11",
     "ty>=0.0.11",
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "pytest-timeout>=2.3.0",
 ]
 
 [tool.ruff]
@@ -57,7 +60,27 @@ python-version = "3.14"
 
 # Deprecation warnings are treated as errors in tests
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 filterwarnings = [
     "error::DeprecationWarning",
     "error::PendingDeprecationWarning",
 ]
+markers = [
+    "unit: Unit tests (<250ms, mocks allowed, no external services)",
+    "integration: Integration tests (<5s, minimal mocks, real services, NO LLMs)",
+    "quality: Quality tests (<30s, minimal mocks, real services, REAL LLMs)",
+]
+# Timing enforcement via pytest-timeout
+timeout = 30  # Default timeout (quality tier max)
+
+[tool.coverage.run]
+source = ["src/unicorn_armada"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
+fail_under = 35  # TODO: Raise to 80% as more tests are added
