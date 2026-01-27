@@ -169,12 +169,15 @@ Core principles guiding combat scoring and team composition enhancements:
 - [x] README updates documenting optional inputs and outputs.
 - [ ] Tests to confirm no behavior change when configs are absent.
 
-### Phase 1: Unit-Level Combat Tie-Breaker
+### Phase 1: Unit-Level Combat Tie-Breaker (COMPLETE)
 - [x] Lexicographic objective: maximize rapports, then combat score.
 - [x] `--min-combat-score` filter.
 - [x] Default role/capability weights and presets.
-- [ ] Optional summary flag to include per-unit combat breakdowns.
-- [ ] Expand summary output with breakdown details (roles/capabilities/unknowns).
+- [x] Optional summary flag to include per-unit combat breakdowns.
+- [x] Expand summary output with breakdown details (roles/capabilities/unknowns).
+
+**Completed:** 2026-01-27
+**Details:** Added `--combat-summary` CLI flag with detailed per-unit breakdowns showing roles and capabilities. Changed unknown class member handling from graceful degradation to error-raising.
 
 ### Phase 2: Army Coverage and Leader Diversity
 
@@ -183,7 +186,7 @@ Core principles guiding combat scoring and team composition enhancements:
 - [x] Coverage weights for unit types.
 - [x] Diversity weights with configurable mode.
 - [ ] Role coverage weights (frontline/support/backline).
-- [ ] Penalty weights for missing or unknown class data.
+- [x] Error-raising for missing or unknown class data (enforces complete dataset).
 - [ ] Optional class-type tags for future scoring.
 
 #### Task Group 2: Data Normalization and Feature Hooks
@@ -217,7 +220,7 @@ Core principles guiding combat scoring and team composition enhancements:
 #### Definition of Done (Phase 2)
 - Rapport solver still works with no new flags.
 - Combat scoring includes coverage + leader diversity in the total score.
-- Missing class data does not crash scoring; it is neutral with warnings.
+- Missing class data raises errors; dataset must be complete for all roster characters.
 - Benchmark and summary output reflect the new scoring components.
 
 ### Phase 3: Formation-Aware Scoring and Benchmarks
