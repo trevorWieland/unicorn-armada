@@ -279,12 +279,12 @@ Core principles guiding combat scoring and team composition enhancements:
 - [ ] Add snapshot tests for output format stability
 
 ### Architecture
-- [ ] Consider async-first if network I/O is added (e.g., remote data sources)
+- [ ] Consider async-first posture.
 - [ ] Add plugin system for custom scoring strategies
 - [ ] Add configuration file support (TOML/YAML) for complex setups
 
 ### Documentation
-- [ ] Add architecture decision records (ADRs)
+- [ ] Add contributing guide for agent-os usage.
 - [ ] Add developer guide for extending the solver
 - [ ] Add API documentation for core module
 

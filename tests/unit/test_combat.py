@@ -211,25 +211,24 @@ class TestCountUnitTags:
         sample_character_classes: dict[str, str],
         sample_class_index: dict[str, ClassDefinition],
     ) -> None:
-        """Unknown character should be in unknown list."""
-        roles, capabilities, unknown = _count_unit_tags(
-            ["unknown_char"], sample_character_classes, sample_class_index
-        )
-        assert roles == {}
-        assert capabilities == {}
-        assert unknown == ["unknown_char"]
+        """Unknown character should raise ValueError."""
+        with pytest.raises(
+            ValueError, match="Character 'unknown_char' has no class mapping"
+        ):
+            _count_unit_tags(
+                ["unknown_char"], sample_character_classes, sample_class_index
+            )
 
     def test_missing_class_definition(
         self,
         sample_class_index: dict[str, ClassDefinition],
     ) -> None:
-        """Character with class not in index should be unknown."""
+        """Character with class not in index should raise ValueError."""
         char_classes = {"alice": "nonexistent_class"}
-        roles, capabilities, unknown = _count_unit_tags(
-            ["alice"], char_classes, sample_class_index
-        )
-        assert unknown == ["alice"]
-        del roles, capabilities  # Silence unused variable warnings
+        with pytest.raises(
+            ValueError, match="Character 'alice' has unknown class 'nonexistent_class'"
+        ):
+            _count_unit_tags(["alice"], char_classes, sample_class_index)
 
     def test_assist_type_adds_assist_capability(
         self,
@@ -313,14 +312,13 @@ class TestCountUnitTags:
         sample_character_classes: dict[str, str],
         sample_class_index: dict[str, ClassDefinition],
     ) -> None:
-        """Unknown members should be sorted alphabetically."""
-        roles, capabilities, unknown = _count_unit_tags(
-            ["zack", "alice", "unknown"],
-            sample_character_classes,
-            sample_class_index,
-        )
-        assert unknown == ["unknown", "zack"]
-        del roles, capabilities  # Silence unused variable warnings
+        """Unknown members should raise ValueError with first unknown character."""
+        with pytest.raises(ValueError, match="Character 'zack' has no class mapping"):
+            _count_unit_tags(
+                ["zack", "alice", "unknown"],
+                sample_character_classes,
+                sample_class_index,
+            )
 
 
 # --- Tests for _score_unit_tags ---
@@ -439,16 +437,17 @@ class TestComputeArmyCoverage:
         self,
         sample_class_index: dict[str, ClassDefinition],
     ) -> None:
-        """Unknown members should be tracked but not crash."""
+        """Unknown members should raise ValueError."""
         weights = CoverageWeights()
-        coverage = compute_army_coverage(
-            [["unknown_char"]],
-            {},
-            sample_class_index,
-            weights,
-        )
-        assert coverage.assist_type_counts == {}
-        assert coverage.unit_type_counts == {}
+        with pytest.raises(
+            ValueError, match="Character 'unknown_char' has no class mapping"
+        ):
+            compute_army_coverage(
+                [["unknown_char"]],
+                {},
+                sample_class_index,
+                weights,
+            )
 
     def test_coverage_scores_sorted(
         self,
@@ -671,14 +670,16 @@ class TestComputeLeaderDiversity:
         self,
         sample_class_index: dict[str, ClassDefinition],
     ) -> None:
-        """Unknown leader class should be labeled 'unknown'."""
-        diversity = compute_leader_diversity(
-            [["unknown_char"]],
-            {},
-            sample_class_index,
-            DiversityWeights(),
-        )
-        assert diversity.leader_classes == ["unknown"]
+        """Unknown leader class should raise ValueError."""
+        with pytest.raises(
+            ValueError, match="Character 'unknown_char' has no class mapping"
+        ):
+            compute_leader_diversity(
+                [["unknown_char"]],
+                {},
+                sample_class_index,
+                DiversityWeights(),
+            )
 
 
 # --- Tests for compute_combat_summary ---
@@ -815,15 +816,14 @@ class TestComputeCombatSummary:
         assert summary.diversity.score == 20.0
 
     def test_no_classes_graceful(self) -> None:
-        """No class data should not crash, just return zero scores."""
-        summary = compute_combat_summary(
-            [["alice", "bob"]],
-            {},
-            [],
-            CombatScoringConfig(),
-        )
-        assert summary.total_score == 0.0
-        assert summary.unit_breakdowns[0].unknown_members == ["alice", "bob"]
+        """No class data should raise ValueError."""
+        with pytest.raises(ValueError, match="Character 'alice' has no class mapping"):
+            compute_combat_summary(
+                [["alice", "bob"]],
+                {},
+                [],
+                CombatScoringConfig(),
+            )
 
     def test_coverage_disabled_explicitly(
         self,

@@ -1,24 +1,10 @@
-Total rapports: 54
-Total combat score: 34.50
-Unit 1 (5 slots): 7 rapports, 3.50 combat
-berenice, mordon, adel, clive, rolf
-Unit 2 (5 slots): 8 rapports, 2.00 combat
-virginia, gilbert, berengaria, aramis, travis
-Unit 3 (4 slots): 6 rapports, 4.50 combat
-alain, rosalinde, eltolinde, scarlett
-Unit 4 (4 slots): 6 rapports, 4.50 combat
-josef, chloe, hodrick, yahna
-Unit 5 (4 slots): 4 rapports, 4.50 combat
-tatiana, nina, gammel, mandrin
-Unit 6 (4 slots): 4 rapports, 3.50 combat
-selvie, kitra, miriam, fran
-Unit 7 (4 slots): 4 rapports, 4.00 combat
-monica, auch, melisandre, liza
-Unit 8 (4 slots): 5 rapports, 1.50 combat
-aubin, magellan, jeremy, gloucester
-Unit 9 (4 slots): 5 rapports, 3.50 combat
-ithilion, lhinalagos, ridiel, galadmir
-Unit 10 (4 slots): 5 rapports, 3.00 combat
-railanor, colm, sharon, lex
+Total rapports: 7
+Total combat score: 10.00
+Unit 1 (3 slots): 3 rapports, 3.50 combat
+alain, rosalinde, lex
+Unit 2 (3 slots): 2 rapports, 2.50 combat
+virginia, josef, clive
+Unit 3 (3 slots): 2 rapports, 4.00 combat
+yahna, travis, chloe
 Unassigned:
-bruno, celeste, hilda, leah, ochlys, primm, renault
+adel, aramis, aubin, auch, berengaria, berenice, bruno, celeste, colm, eltolinde, fran, galadmir, gammel, gilbert, gloucester, hilda, hodrick, ithilion, jeremy, kitra, leah, lhinalagos, liza, magellan, mandrin, melisandre, miriam, monica, mordon, nina, ochlys, primm, railanor, renault, ridiel, rolf, scarlett, selvie, sharon, tatiana

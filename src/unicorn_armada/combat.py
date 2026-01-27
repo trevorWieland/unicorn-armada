@@ -28,12 +28,10 @@ def _count_unit_tags(
     for member in unit:
         class_id = character_classes.get(member)
         if not class_id:
-            unknown_members.append(member)
-            continue
+            raise ValueError(f"Character '{member}' has no class mapping")
         class_family = class_index.get(class_id)
         if class_family is None:
-            unknown_members.append(member)
-            continue
+            raise ValueError(f"Character '{member}' has unknown class '{class_id}'")
         for role in class_family.roles:
             roles[role] = roles.get(role, 0) + 1
         capability_set = set(class_family.capabilities)
@@ -84,18 +82,15 @@ def compute_army_coverage(
     """
     assist_type_counts: dict[str, int] = {}
     unit_type_counts: dict[str, int] = {}
-    unknown_members = 0
 
     for unit in units:
         for member in unit:
             class_id = character_classes.get(member)
             if not class_id:
-                unknown_members += 1
-                continue
+                raise ValueError(f"Character '{member}' has no class mapping")
             class_family = class_index.get(class_id)
             if class_family is None:
-                unknown_members += 1
-                continue
+                raise ValueError(f"Character '{member}' has unknown class '{class_id}'")
 
             # Count assist types
             assist = class_family.assist_type
@@ -116,12 +111,6 @@ def compute_army_coverage(
     for type_name, weight in weights.unit_type_weights.items():
         if type_name in unit_type_counts:
             unit_type_score += weight
-
-    if unknown_members > 0:
-        total_members = sum(len(unit) for unit in units)
-        if unknown_members / total_members > 0.5:
-            # Warning but don't fail - graceful degradation
-            pass  # Could log warning
 
     return CoverageSummary(
         assist_type_counts=dict(sorted(assist_type_counts.items())),
@@ -184,18 +173,20 @@ def compute_leader_diversity(
 
             # Determine leader identifier based on mode
             class_id = character_classes.get(leader)
-            if class_id and class_id in class_index:
-                class_family = class_index[class_id]
-                if weights.mode == "class":
-                    leader_id = class_id
-                elif weights.mode == "unit_type":
-                    leader_id = class_family.unit_type
-                elif weights.mode == "assist_type":
-                    leader_id = class_family.assist_type
-                else:
-                    leader_id = class_id
+            if not class_id:
+                raise ValueError(f"Character '{leader}' has no class mapping")
+            if class_id not in class_index:
+                raise ValueError(f"Character '{leader}' has unknown class '{class_id}'")
+
+            class_family = class_index[class_id]
+            if weights.mode == "class":
+                leader_id = class_id
+            elif weights.mode == "unit_type":
+                leader_id = class_family.unit_type
+            elif weights.mode == "assist_type":
+                leader_id = class_family.assist_type
             else:
-                leader_id = "unknown"
+                leader_id = class_id
 
             leader_classes.append(leader_id)
 

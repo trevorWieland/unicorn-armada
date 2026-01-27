@@ -1,89 +1,68 @@
 {
   "units": [
     [
-      "berenice",
-      "mordon",
-      "adel",
-      "clive",
-      "rolf"
+      "alain",
+      "rosalinde",
+      "lex"
     ],
     [
       "virginia",
-      "gilbert",
-      "berengaria",
-      "aramis",
-      "travis"
-    ],
-    [
-      "alain",
-      "rosalinde",
-      "eltolinde",
-      "scarlett"
-    ],
-    [
       "josef",
-      "chloe",
-      "hodrick",
-      "yahna"
+      "clive"
     ],
     [
-      "tatiana",
-      "nina",
-      "gammel",
-      "mandrin"
-    ],
-    [
-      "selvie",
-      "kitra",
-      "miriam",
-      "fran"
-    ],
-    [
-      "monica",
-      "auch",
-      "melisandre",
-      "liza"
-    ],
-    [
-      "aubin",
-      "magellan",
-      "jeremy",
-      "gloucester"
-    ],
-    [
-      "ithilion",
-      "lhinalagos",
-      "ridiel",
-      "galadmir"
-    ],
-    [
-      "railanor",
-      "colm",
-      "sharon",
-      "lex"
+      "yahna",
+      "travis",
+      "chloe"
     ]
   ],
   "unit_rapports": [
-    7,
-    8,
-    6,
-    6,
-    4,
-    4,
-    4,
-    5,
-    5,
-    5
+    3,
+    2,
+    2
   ],
-  "total_rapports": 54,
+  "total_rapports": 7,
   "unassigned": [
+    "adel",
+    "aramis",
+    "aubin",
+    "auch",
+    "berengaria",
+    "berenice",
     "bruno",
     "celeste",
+    "colm",
+    "eltolinde",
+    "fran",
+    "galadmir",
+    "gammel",
+    "gilbert",
+    "gloucester",
     "hilda",
+    "hodrick",
+    "ithilion",
+    "jeremy",
+    "kitra",
     "leah",
+    "lhinalagos",
+    "liza",
+    "magellan",
+    "mandrin",
+    "melisandre",
+    "miriam",
+    "monica",
+    "mordon",
+    "nina",
     "ochlys",
     "primm",
-    "renault"
+    "railanor",
+    "renault",
+    "ridiel",
+    "rolf",
+    "scarlett",
+    "selvie",
+    "sharon",
+    "tatiana"
   ],
   "seed": 0,
   "restarts": 50,
@@ -91,60 +70,14 @@
   "combat": {
     "unit_scores": [
       3.5,
-      2.0,
-      4.5,
-      4.5,
-      4.5,
-      3.5,
-      4.0,
-      1.5,
-      3.5,
-      3.0
+      2.5,
+      4.0
     ],
     "unit_breakdowns": [
       {
         "roles": {
           "backline": 1,
-          "frontline": 4
-        },
-        "capabilities": {
-          "archer": 1,
-          "assist": 1,
-          "cavalry": 2
-        },
-        "unknown_members": [],
-        "score": 3.5
-      },
-      {
-        "roles": {
-          "frontline": 5
-        },
-        "capabilities": {
-          "assist": 1,
-          "caster": 1
-        },
-        "unknown_members": [],
-        "score": 2.0
-      },
-      {
-        "roles": {
-          "backline": 1,
-          "frontline": 1,
-          "support": 2
-        },
-        "capabilities": {
-          "assist": 3,
-          "caster": 3,
-          "cavalry": 1
-        },
-        "unknown_members": [],
-        "score": 4.5
-      },
-      {
-        "roles": {
-          "backline": 1,
-          "frontline": 3,
-          "support": 1
+          "frontline": 2
         },
         "capabilities": {
           "assist": 1,
@@ -152,7 +85,19 @@
           "cavalry": 1
         },
         "unknown_members": [],
-        "score": 4.5
+        "score": 3.5
+      },
+      {
+        "roles": {
+          "frontline": 3
+        },
+        "capabilities": {
+          "assist": 1,
+          "caster": 1,
+          "cavalry": 2
+        },
+        "unknown_members": [],
+        "score": 2.5
       },
       {
         "roles": {
@@ -161,76 +106,40 @@
           "support": 1
         },
         "capabilities": {
-          "archer": 1,
-          "assist": 2,
+          "assist": 1,
           "caster": 1
         },
         "unknown_members": [],
-        "score": 4.5
-      },
-      {
-        "roles": {
-          "frontline": 3,
-          "support": 1
-        },
-        "capabilities": {
-          "caster": 1,
-          "cavalry": 1,
-          "flying": 1
-        },
-        "unknown_members": [],
-        "score": 3.5
-      },
-      {
-        "roles": {
-          "backline": 2,
-          "frontline": 2
-        },
-        "capabilities": {
-          "archer": 1,
-          "assist": 2,
-          "caster": 1,
-          "cavalry": 1
-        },
-        "unknown_members": [],
         "score": 4.0
-      },
-      {
-        "roles": {
-          "frontline": 4
-        },
-        "capabilities": {
-          "cavalry": 1
-        },
-        "unknown_members": [],
-        "score": 1.5
-      },
-      {
-        "roles": {
-          "backline": 3,
-          "frontline": 1
-        },
-        "capabilities": {
-          "archer": 3,
-          "assist": 4,
-          "caster": 4
-        },
-        "unknown_members": [],
-        "score": 3.5
-      },
-      {
-        "roles": {
-          "frontline": 3,
-          "support": 1
-        },
-        "capabilities": {
-          "assist": 2,
-          "caster": 2
-        },
-        "unknown_members": [],
-        "score": 3.0
       }
     ],
-    "total_score": 34.5
+    "total_score": 10.0,
+    "coverage": {
+      "assist_type_counts": {
+        "magick": 3
+      },
+      "unit_type_counts": {
+        "cavalry": 3,
+        "infantry": 6
+      },
+      "assist_type_score": 0.5,
+      "unit_type_score": 0.6,
+      "total_score": 1.1
+    },
+    "diversity": {
+      "leaders": [
+        "alain",
+        "virginia",
+        "yahna"
+      ],
+      "leader_classes": [
+        "high_lord",
+        "valkyria",
+        "sorceress"
+      ],
+      "unique_count": 3,
+      "duplicate_count": 0,
+      "score": 3.0
+    }
   }
 }

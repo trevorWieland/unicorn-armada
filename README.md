@@ -129,6 +129,8 @@ scarlett,priestess
 Overrides the dataset default class for a character. Overrides must be valid for
 that character's class line in `data/dataset.json`.
 
+**Important:** All characters in your roster must have class data. Characters without a class mapping or with unknown class IDs will cause the solver to fail with an error. Ensure `data/dataset.json` contains complete class definitions for all characters in your roster.
+
 ### Minimum combat score
 
 Use `--min-combat-score` to require a minimum total combat score for a solution:
@@ -138,6 +140,41 @@ uv run unicorn-rapport solve-units \
   --units 4,3,4,3,4,3 \
   --min-combat-score 6
 ```
+
+### Detailed combat summary
+
+Use `--combat-summary` to enable detailed combat breakdowns in the summary output:
+
+```bash
+uv run unicorn-rapport solve-units \
+  --units 4,3,4,3,4,3 \
+  --combat-summary
+```
+
+When enabled, `out/summary.txt` will include a detailed breakdown section:
+
+```
+Total rapports: 54
+Total combat score: 34.50
+Unit 1 (5 slots): 7 rapports, 3.50 combat
+berenice, mordon, adel, clive, rolf
+...
+
+## Combat Summary Breakdown
+
+Unit 1 (3.50 combat):
+  Roles: frontline, support
+  Capabilities: archer, cavalry
+
+Unit 2 (2.00 combat):
+  Roles: backline, support
+  Capabilities: caster, assist
+```
+
+The breakdown shows:
+- Combat score per unit
+- Roles present (e.g., frontline, support, backline)
+- Capabilities present (e.g., archer, caster, assist)
 
 ### Benchmarking combat scores
 

@@ -68,7 +68,13 @@ def sort_pairs(pairs: set[Pair]) -> list[Pair]:
     return sorted(pairs, key=lambda pair: tuple(sorted(pair)))
 
 
-def write_summary(path: Path, solution, units: list[int]) -> None:
+def write_summary(
+    path: Path,
+    solution,
+    units: list[int],
+    combat_summary: bool = False,
+    combat_scoring: CombatScoringConfig | None = None,
+) -> None:
     lines = [f"Total rapports: {solution.total_rapports}"]
     if solution.combat is not None:
         lines.append(f"Total combat score: {solution.combat.total_score:.2f}")
@@ -90,6 +96,42 @@ def write_summary(path: Path, solution, units: list[int]) -> None:
         lines.append("Unassigned:")
         lines.append(", ".join(solution.unassigned))
     path.write_text("\n".join(lines) + "\n")
+
+    if combat_summary and solution.combat is not None and combat_scoring is not None:
+        write_detailed_combat_summary(path, solution, units, combat_scoring)
+
+
+def write_detailed_combat_summary(
+    path: Path,
+    solution,
+    units: list[int],
+    combat_scoring: CombatScoringConfig,
+) -> None:
+    lines = []
+    lines.append("")
+    lines.append("## Combat Summary Breakdown")
+    lines.append("")
+
+    for idx, unit_breakdown in enumerate(solution.combat.unit_breakdowns, start=1):
+        unit_score = unit_breakdown.score
+        lines.append(f"Unit {idx} ({unit_score:.2f} combat):")
+
+        if unit_breakdown.roles:
+            roles_str = ", ".join(sorted(unit_breakdown.roles.keys()))
+            lines.append(f"  Roles: {roles_str}")
+        else:
+            lines.append("  Roles: (none)")
+
+        if unit_breakdown.capabilities:
+            caps_str = ", ".join(sorted(unit_breakdown.capabilities.keys()))
+            lines.append(f"  Capabilities: {caps_str}")
+        else:
+            lines.append("  Capabilities: (none)")
+
+        lines.append("")
+
+    with path.open("a") as f:
+        f.write("\n".join(lines))
 
 
 def stats_to_dict(stats: BenchmarkStats) -> dict[str, float | int]:
@@ -454,6 +496,9 @@ def solve_units(
     summary: Annotated[Path, typer.Option(help="Summary output path")] = Path(
         "out/summary.txt"
     ),
+    combat_summary: Annotated[
+        bool, typer.Option(help="Enable detailed combat breakdown in summary")
+    ] = False,
 ) -> None:
     (
         dataset_data,
@@ -505,26 +550,26 @@ def solve_units(
         raise typer.BadParameter(str(exc)) from exc
 
     if not dataset_data.classes or not effective_classes:
-        combat_summary = compute_combat_summary(
+        computed_combat = compute_combat_summary(
             [[] for _ in solution.units],
             {},
             [],
             CombatScoringConfig(),
         )
     else:
-        combat_summary = compute_combat_summary(
+        computed_combat = compute_combat_summary(
             solution.units,
             effective_classes,
             dataset_data.classes,
             combat_scoring,
         )
-    solution = solution.model_copy(update={"combat": combat_summary})
+    solution = solution.model_copy(update={"combat": computed_combat})
 
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(solution.model_dump_json(indent=2))
 
     summary.parent.mkdir(parents=True, exist_ok=True)
-    write_summary(summary, solution, unit_sizes)
+    write_summary(summary, solution, unit_sizes, combat_summary, combat_scoring)
 
     typer.echo(f"Total rapports: {solution.total_rapports}")
     typer.echo(f"Wrote solution to {out}")
