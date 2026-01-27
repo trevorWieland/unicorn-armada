@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Callable, Iterable
 import random
+
+from pydantic import BaseModel, Field, ConfigDict
 
 from .models import Solution
 from .scoring import score_unit
@@ -13,19 +14,25 @@ class SolveError(ValueError):
     pass
 
 
-@dataclass(frozen=True)
-class Cluster:
-    members: tuple[str, ...]
+class Cluster(BaseModel):
+    """Immutable cluster of characters that must stay together."""
+
+    model_config = ConfigDict(frozen=True)
+
+    members: tuple[str, ...] = Field(..., description="Character IDs in this cluster")
 
     @property
     def size(self) -> int:
         return len(self.members)
 
 
-@dataclass
-class UnitState:
-    capacity: int
-    clusters: list[int]
+class UnitState(BaseModel):
+    """Mutable state for a unit during assignment."""
+
+    capacity: int = Field(..., description="Remaining capacity in the unit")
+    clusters: list[int] = Field(
+        default_factory=list, description="Indices of clusters assigned to this unit"
+    )
 
 
 class UnionFind:
@@ -261,7 +268,7 @@ def build_clusters(
             raise SolveError(
                 "Whitelist requires a group larger than the maximum unit size"
             )
-        clusters.append(Cluster(members_sorted))
+        clusters.append(Cluster(members=members_sorted))
 
     clusters.sort(key=lambda cluster: cluster.members)
 

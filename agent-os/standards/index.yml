@@ -1,0 +1,44 @@
+# Agent OS Standards Index
+
+architecture:
+  adapter-interface-protocol:
+    description: Needs description - run /index-standards
+  api-response-format:
+    description: Needs description - run /index-standards
+  log-line-format:
+    description: Needs description - run /index-standards
+  naming-conventions:
+    description: Needs description - run /index-standards
+  thin-adapter-pattern:
+    description: Needs description - run /index-standards
+
+global:
+  address-deprecations-immediately:
+    description: Needs description - run /index-standards
+  prefer-dependency-updates:
+    description: Needs description - run /index-standards
+
+python:
+  async-first-design:
+    description: Needs description - run /index-standards
+  modern-python-314:
+    description: Needs description - run /index-standards
+  pydantic-only-schemas:
+    description: Needs description - run /index-standards
+  strict-typing-enforcement:
+    description: Needs description - run /index-standards
+
+testing:
+  bdd-for-integration-quality:
+    description: Needs description - run /index-standards
+  mandatory-coverage:
+    description: Needs description - run /index-standards
+  no-mocks-for-quality-tests:
+    description: Needs description - run /index-standards
+  no-test-skipping:
+    description: Needs description - run /index-standards
+  test-timing-rules:
+    description: Needs description - run /index-standards
+  three-tier-test-structure:
+    description: Needs description - run /index-standards
+

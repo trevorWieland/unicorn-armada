@@ -10,5 +10,25 @@
     "cavalry": 0.5,
     "caster": 0.5,
     "flying": 0.5
+  },
+  "coverage": {
+    "enabled": true,
+    "assist_type_weights": {
+      "ranged": 0.5,
+      "magick": 0.5,
+      "healing": 0.5
+    },
+    "unit_type_weights": {
+      "infantry": 0.3,
+      "cavalry": 0.3,
+      "flying": 0.3
+    },
+    "target_multiplier": 1.0
+  },
+  "diversity": {
+    "enabled": true,
+    "unique_leader_bonus": 1.0,
+    "duplicate_leader_penalty": 0.5,
+    "mode": "class"
   }
 }

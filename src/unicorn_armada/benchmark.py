@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import math
 import random
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field
 
 from .combat import compute_combat_summary
 from .models import ClassDefinition, CombatScoringConfig
@@ -17,16 +18,17 @@ from .solver import (
 from .utils import Pair
 
 
-@dataclass
-class BenchmarkStats:
-    count: int
-    minimum: float
-    maximum: float
-    mean: float
-    median: float
-    p75: float
-    p90: float
-    std: float
+class BenchmarkStats(BaseModel):
+    """Statistics for benchmark results."""
+
+    count: int = Field(..., description="Number of samples in the benchmark")
+    minimum: float = Field(..., description="Minimum score observed")
+    maximum: float = Field(..., description="Maximum score observed")
+    mean: float = Field(..., description="Mean score across all samples")
+    median: float = Field(..., description="Median (p50) score")
+    p75: float = Field(..., description="75th percentile score")
+    p90: float = Field(..., description="90th percentile score")
+    std: float = Field(..., description="Standard deviation of scores")
 
 
 def percentile(values: list[float], percent: float) -> float:

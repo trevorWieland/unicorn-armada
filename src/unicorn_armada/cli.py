@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import json
 import random
+from collections.abc import Callable
 from pathlib import Path
-from typing import Optional
+from typing import TypedDict
 
 import typer
 
@@ -27,6 +28,17 @@ from .io import (
 from .models import CombatScoringConfig
 from .solver import SolveError, solve
 from .utils import Pair, normalize_id, pair_key
+
+
+class RapportEntry(TypedDict):
+    """Raw rapport entry from dataset JSON."""
+
+    id: str
+    pairs: list[str]
+
+
+# Type alias for benchmark unit size reports
+UnitSizeReportData = dict[str, dict[str, float | int] | float | int]
 
 
 app = typer.Typer(add_completion=False)
@@ -92,9 +104,9 @@ def stats_to_dict(stats: BenchmarkStats) -> dict[str, float | int]:
 
 
 def normalize_rapport_entries(
-    rapport_entries: list[dict[str, object]],
+    rapport_entries: list[RapportEntry],
     character_ids: set[str],
-) -> tuple[list[dict[str, object]], dict[str, int]]:
+) -> tuple[list[RapportEntry], dict[str, int]]:
     id_order: list[str] = []
     rapport_map: dict[str, list[str]] = {}
     duplicate_entries = 0
@@ -154,7 +166,7 @@ def normalize_rapport_entries(
             adjacency[character_id].add(partner_id)
             adjacency[partner_id].add(character_id)
 
-    normalized_entries: list[dict[str, object]] = []
+    normalized_entries: list[RapportEntry] = []
     added_pairs = 0
     added_entries = 0
 
@@ -190,12 +202,12 @@ def normalize_rapport_entries(
 
 
 def load_problem_inputs(
-    dataset: Optional[Path],
-    roster: Optional[Path],
-    units: Optional[str],
-    units_file: Optional[Path],
-    whitelist: Optional[Path],
-    blacklist: Optional[Path],
+    dataset: Path | None,
+    roster: Path | None,
+    units: str | None,
+    units_file: Path | None,
+    whitelist: Path | None,
+    blacklist: Path | None,
 ):
     dataset_path = dataset or DEFAULT_DATASET
     try:
@@ -399,28 +411,28 @@ def load_combat_context(dataset_data, roster_set: set[str]):
 
 @app.command()
 def solve_units(
-    dataset: Optional[Path] = typer.Option(
+    dataset: Path | None = typer.Option(
         None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
     ),
-    roster: Optional[Path] = typer.Option(
+    roster: Path | None = typer.Option(
         None,
         "--roster",
         help="CSV of available character ids (default: config/roster.csv)",
     ),
-    units: Optional[str] = typer.Option(
+    units: str | None = typer.Option(
         None,
         "--units",
         help="Comma-separated list of unit sizes (e.g. 4,3,4,3)",
     ),
-    units_file: Optional[Path] = typer.Option(
+    units_file: Path | None = typer.Option(
         None, "--units-file", help="JSON file containing unit sizes list"
     ),
-    whitelist: Optional[Path] = typer.Option(
+    whitelist: Path | None = typer.Option(
         None,
         "--whitelist",
         help="CSV of required pairs (default: config/whitelist.csv)",
     ),
-    blacklist: Optional[Path] = typer.Option(
+    blacklist: Path | None = typer.Option(
         None,
         "--blacklist",
         help="CSV of forbidden pairs (default: config/blacklist.csv)",
@@ -428,7 +440,7 @@ def solve_units(
     seed: int = typer.Option(0, help="Random seed for deterministic output"),
     restarts: int = typer.Option(50, help="Greedy restart attempts"),
     swap_iterations: int = typer.Option(200, help="Swap-improvement iterations"),
-    min_combat_score: Optional[float] = typer.Option(
+    min_combat_score: float | None = typer.Option(
         None,
         "--min-combat-score",
         help="Minimum total combat score required for a solution",
@@ -452,16 +464,21 @@ def solve_units(
     roster_set = set(roster_ids)
     combat_scoring, effective_classes = load_combat_context(dataset_data, roster_set)
 
-    combat_score_fn = None
-    if dataset_data.classes and effective_classes:
+    def _make_combat_score_fn() -> Callable[[list[list[str]]], float] | None:
+        if not dataset_data.classes or not effective_classes:
+            return None
 
-        def combat_score_fn(units: list[list[str]]) -> float:
+        def score_fn(units: list[list[str]]) -> float:
             return compute_combat_summary(
                 units,
                 effective_classes,
                 dataset_data.classes,
                 combat_scoring,
             ).total_score
+
+        return score_fn
+
+    combat_score_fn = _make_combat_score_fn()
 
     if min_combat_score is not None and combat_score_fn is None:
         raise typer.BadParameter(
@@ -513,28 +530,28 @@ def solve_units(
 
 @app.command()
 def benchmark_units(
-    dataset: Optional[Path] = typer.Option(
+    dataset: Path | None = typer.Option(
         None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
     ),
-    roster: Optional[Path] = typer.Option(
+    roster: Path | None = typer.Option(
         None,
         "--roster",
         help="CSV of available character ids (default: config/roster.csv)",
     ),
-    units: Optional[str] = typer.Option(
+    units: str | None = typer.Option(
         None,
         "--units",
         help="Comma-separated list of unit sizes (e.g. 4,3,4,3)",
     ),
-    units_file: Optional[Path] = typer.Option(
+    units_file: Path | None = typer.Option(
         None, "--units-file", help="JSON file containing unit sizes list"
     ),
-    whitelist: Optional[Path] = typer.Option(
+    whitelist: Path | None = typer.Option(
         None,
         "--whitelist",
         help="CSV of required pairs (default: config/whitelist.csv)",
     ),
-    blacklist: Optional[Path] = typer.Option(
+    blacklist: Path | None = typer.Option(
         None,
         "--blacklist",
         help="CSV of forbidden pairs (default: config/blacklist.csv)",
@@ -567,7 +584,7 @@ def benchmark_units(
     rng = random.Random(seed)
 
     per_unit_size_stats: dict[str, BenchmarkStats] = {}
-    per_unit_size_report: dict[str, dict[str, object]] = {}
+    per_unit_size_report: dict[str, UnitSizeReportData] = {}
     for size in range(2, 7):
         values = []
         if combat_available:
@@ -673,10 +690,10 @@ def benchmark_units(
 
 @app.command()
 def sync_rapports(
-    dataset: Optional[Path] = typer.Option(
+    dataset: Path | None = typer.Option(
         None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
     ),
-    out: Optional[Path] = typer.Option(
+    out: Path | None = typer.Option(
         None,
         "--out",
         help="Output dataset JSON path (default: overwrite dataset file)",

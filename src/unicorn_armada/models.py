@@ -47,8 +47,10 @@ def _normalize_identifier(value: str, field_name: str) -> str:
 
 
 class Character(BaseModel):
-    id: Annotated[str, Field(min_length=1)]
-    name: str | None = None
+    """A game character."""
+
+    id: Annotated[str, Field(min_length=1, description="Unique character identifier")]
+    name: str | None = Field(None, description="Display name of the character")
 
     @field_validator("id", mode="before")
     @classmethod
@@ -57,8 +59,13 @@ class Character(BaseModel):
 
 
 class RapportListEntry(BaseModel):
-    id: Annotated[str, Field(min_length=1)]
-    pairs: list[str] = Field(default_factory=list)
+    """Rapport pairs for a single character."""
+
+    id: Annotated[str, Field(min_length=1, description="Character identifier")]
+    pairs: list[str] = Field(
+        default_factory=list,
+        description="List of character IDs this character has rapport with",
+    )
 
     @field_validator("id", mode="before")
     @classmethod
@@ -90,11 +97,21 @@ class RapportListEntry(BaseModel):
 
 
 class Dataset(BaseModel):
-    characters: list[Character]
-    rapports: list[RapportListEntry]
-    classes: list["ClassDefinition"] = Field(default_factory=list)
-    class_lines: list["ClassLine"] = Field(default_factory=list)
-    character_classes: dict[str, "CharacterClassInfo"] = Field(default_factory=dict)
+    """Complete game dataset with characters, rapports, and class definitions."""
+
+    characters: list[Character] = Field(..., description="List of all characters")
+    rapports: list[RapportListEntry] = Field(
+        ..., description="Rapport pair data for characters"
+    )
+    classes: list["ClassDefinition"] = Field(
+        default_factory=list, description="Class definitions with roles and stats"
+    )
+    class_lines: list["ClassLine"] = Field(
+        default_factory=list, description="Class promotion lines"
+    )
+    character_classes: dict[str, "CharacterClassInfo"] = Field(
+        default_factory=dict, description="Default class assignments per character"
+    )
 
     @model_validator(mode="after")
     def validate_class_references(self) -> "Dataset":
@@ -144,24 +161,38 @@ class Dataset(BaseModel):
 
 
 class LeaderEffect(BaseModel):
-    name: Annotated[str, Field(min_length=1)]
-    description: Annotated[str, Field(min_length=1)]
+    """Special effect when a character is the unit leader."""
+
+    name: Annotated[str, Field(min_length=1, description="Effect name")]
+    description: Annotated[str, Field(min_length=1, description="Effect description")]
 
 
 class ClassDefinition(BaseModel):
-    id: Annotated[str, Field(min_length=1)]
-    name: str | None = None
-    roles: list[str]
-    capabilities: list[str] = Field(default_factory=list)
-    row_preference: Literal["front", "back", "flex"] = "flex"
-    class_types: list[str]
-    unit_type: Literal["infantry", "cavalry", "flying"]
-    assist_type: Literal["none", "ranged", "magick", "healing"]
-    leader_effect: LeaderEffect | None = None
-    class_trait: str | None = None
-    stamina: int
-    mobility: int
-    promotes_to: str | None = None
+    """Definition of a character class with stats and capabilities."""
+
+    id: Annotated[str, Field(min_length=1, description="Unique class identifier")]
+    name: str | None = Field(None, description="Display name of the class")
+    roles: list[str] = Field(..., description="Combat roles (e.g., tank, dps, support)")
+    capabilities: list[str] = Field(
+        default_factory=list, description="Special capabilities of this class"
+    )
+    row_preference: Literal["front", "back", "flex"] = Field(
+        "flex", description="Preferred row position in formation"
+    )
+    class_types: list[str] = Field(..., description="Class type tags")
+    unit_type: Literal["infantry", "cavalry", "flying"] = Field(
+        ..., description="Movement and unit type category"
+    )
+    assist_type: Literal["none", "ranged", "magick", "healing"] = Field(
+        ..., description="Type of assist attacks this class provides"
+    )
+    leader_effect: LeaderEffect | None = Field(
+        None, description="Special effect when leading a unit"
+    )
+    class_trait: str | None = Field(None, description="Unique class trait")
+    stamina: int = Field(..., description="Base stamina stat")
+    mobility: int = Field(..., description="Base mobility stat")
+    promotes_to: str | None = Field(None, description="Class this promotes to")
 
     @field_validator("id", mode="before")
     @classmethod
@@ -215,9 +246,11 @@ class ClassDefinition(BaseModel):
 
 
 class ClassLine(BaseModel):
-    id: Annotated[str, Field(min_length=1)]
-    name: str | None = None
-    classes: list[str]
+    """A promotion line of related classes."""
+
+    id: Annotated[str, Field(min_length=1, description="Unique class line identifier")]
+    name: str | None = Field(None, description="Display name for the class line")
+    classes: list[str] = Field(..., description="Class IDs in this promotion line")
 
     @field_validator("id", mode="before")
     @classmethod
@@ -239,8 +272,14 @@ class ClassLine(BaseModel):
 
 
 class CharacterClassInfo(BaseModel):
-    default_class: Annotated[str, Field(min_length=1)]
-    class_line: str | None = None
+    """Class assignment info for a character."""
+
+    default_class: Annotated[
+        str, Field(min_length=1, description="Default class for this character")
+    ]
+    class_line: str | None = Field(
+        None, description="Class line this character belongs to"
+    )
 
     @field_validator("default_class", mode="before")
     @classmethod
@@ -255,9 +294,63 @@ class CharacterClassInfo(BaseModel):
         return _normalize_identifier(str(value), "class_line")
 
 
+class CoverageWeights(BaseModel):
+    """Weights for army coverage scoring."""
+
+    enabled: bool = Field(True, description="Whether coverage scoring is enabled")
+    assist_type_weights: dict[str, float] = Field(
+        default_factory=lambda: {"ranged": 0.5, "magick": 0.5, "healing": 0.5},
+        description="Weights for assist type coverage",
+    )
+    unit_type_weights: dict[str, float] = Field(
+        default_factory=lambda: {"infantry": 0.3, "cavalry": 0.3, "flying": 0.3},
+        description="Weights for unit type coverage",
+    )
+    target_multiplier: float = Field(1.0, description="Multiplier for target coverage")
+
+    @field_validator("assist_type_weights", mode="before")
+    @classmethod
+    def normalize_assist_type_weights(
+        cls, value: dict[str, float] | None
+    ) -> dict[str, float]:
+        return _normalize_weights(value, "assist_type_weights")
+
+    @field_validator("unit_type_weights", mode="before")
+    @classmethod
+    def normalize_unit_type_weights(
+        cls, value: dict[str, float] | None
+    ) -> dict[str, float]:
+        return _normalize_weights(value, "unit_type_weights")
+
+
+class DiversityWeights(BaseModel):
+    """Weights for leader diversity scoring."""
+
+    enabled: bool = Field(True, description="Whether diversity scoring is enabled")
+    unique_leader_bonus: float = Field(1.0, description="Bonus for unique leaders")
+    duplicate_leader_penalty: float = Field(
+        0.5, description="Penalty for duplicate leaders"
+    )
+    mode: Literal["class", "unit_type", "assist_type"] = Field(
+        "class", description="Diversity calculation mode"
+    )
+
+
 class CombatScoringConfig(BaseModel):
-    role_weights: dict[str, float] = Field(default_factory=dict)
-    capability_weights: dict[str, float] = Field(default_factory=dict)
+    """Configuration for combat scoring calculations."""
+
+    role_weights: dict[str, float] = Field(
+        default_factory=dict, description="Weights for combat roles"
+    )
+    capability_weights: dict[str, float] = Field(
+        default_factory=dict, description="Weights for capabilities"
+    )
+    coverage: CoverageWeights = Field(
+        default_factory=CoverageWeights, description="Coverage scoring configuration"
+    )
+    diversity: DiversityWeights = Field(
+        default_factory=DiversityWeights, description="Diversity scoring configuration"
+    )
 
     @field_validator("role_weights", mode="before")
     @classmethod
@@ -273,24 +366,80 @@ class CombatScoringConfig(BaseModel):
 
 
 class CombatUnitBreakdown(BaseModel):
-    roles: dict[str, int] = Field(default_factory=dict)
-    capabilities: dict[str, int] = Field(default_factory=dict)
-    unknown_members: list[str] = Field(default_factory=list)
-    score: float = 0.0
+    """Breakdown of combat scoring for a single unit."""
+
+    roles: dict[str, int] = Field(
+        default_factory=dict, description="Count of each role in the unit"
+    )
+    capabilities: dict[str, int] = Field(
+        default_factory=dict, description="Count of each capability in the unit"
+    )
+    unknown_members: list[str] = Field(
+        default_factory=list, description="Members with unknown class data"
+    )
+    score: float = Field(0.0, description="Combat score for this unit")
+
+
+class CoverageSummary(BaseModel):
+    """Summary of army coverage scoring."""
+
+    assist_type_counts: dict[str, int] = Field(
+        default_factory=dict, description="Count of each assist type across army"
+    )
+    unit_type_counts: dict[str, int] = Field(
+        default_factory=dict, description="Count of each unit type across army"
+    )
+    assist_type_score: float = Field(0.0, description="Score from assist type coverage")
+    unit_type_score: float = Field(0.0, description="Score from unit type coverage")
+    total_score: float = Field(0.0, description="Total coverage score")
+
+
+class DiversitySummary(BaseModel):
+    """Summary of leader diversity scoring."""
+
+    leaders: list[str] = Field(default_factory=list, description="List of unit leaders")
+    leader_classes: list[str] = Field(
+        default_factory=list, description="Classes of unit leaders"
+    )
+    unique_count: int = Field(0, description="Number of unique leader classes")
+    duplicate_count: int = Field(0, description="Number of duplicate leader classes")
+    score: float = Field(0.0, description="Diversity score")
 
 
 class CombatSummary(BaseModel):
-    unit_scores: list[float] = Field(default_factory=list)
-    unit_breakdowns: list[CombatUnitBreakdown] = Field(default_factory=list)
-    total_score: float = 0.0
+    """Complete combat summary for a solution."""
+
+    unit_scores: list[float] = Field(
+        default_factory=list, description="Combat score per unit"
+    )
+    unit_breakdowns: list[CombatUnitBreakdown] = Field(
+        default_factory=list, description="Detailed breakdown per unit"
+    )
+    total_score: float = Field(0.0, description="Sum of unit combat scores")
+    coverage: CoverageSummary = Field(
+        default_factory=CoverageSummary, description="Army coverage summary"
+    )
+    diversity: DiversitySummary = Field(
+        default_factory=DiversitySummary, description="Leader diversity summary"
+    )
+
+    @property
+    def army_total_score(self) -> float:
+        return self.total_score + self.coverage.total_score + self.diversity.score
 
 
 class Solution(BaseModel):
-    units: list[list[str]]
-    unit_rapports: list[int]
-    total_rapports: int
-    unassigned: list[str]
-    seed: int
-    restarts: int
-    swap_iterations: int
-    combat: CombatSummary | None = None
+    """Solution from the unit optimization solver."""
+
+    units: list[list[str]] = Field(..., description="Character assignments per unit")
+    unit_rapports: list[int] = Field(..., description="Rapport count per unit")
+    total_rapports: int = Field(..., description="Total rapport pairs across all units")
+    unassigned: list[str] = Field(
+        ..., description="Characters not assigned to any unit"
+    )
+    seed: int = Field(..., description="Random seed used for this run")
+    restarts: int = Field(..., description="Number of greedy restarts")
+    swap_iterations: int = Field(
+        ..., description="Number of swap improvement iterations"
+    )
+    combat: CombatSummary | None = Field(None, description="Combat scoring summary")

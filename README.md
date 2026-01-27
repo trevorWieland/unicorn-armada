@@ -182,3 +182,82 @@ Outputs:
 - `unit_scores`: combat score per unit
 - `unit_breakdowns`: per-unit role/capability counts and unknown members
 - `total_score`: sum of unit scores
+- `coverage`: army-level coverage breakdown (assist types, unit types)
+- `diversity`: leader diversity breakdown (leaders, unique count, score)
+- `army_total_score`: total score including unit + coverage + diversity
+
+## Army Coverage & Diversity (Phase 2)
+
+The solver now includes army-level strategic scoring alongside unit-level combat scoring.
+
+### Coverage Scoring
+
+Encourages diverse assist types and unit types across your army.
+
+- Assist types: ranged, magick, healing
+- Unit types: infantry, cavalry, flying
+
+Coverage is scored by giving a bonus for each unique type present. Soft scoring means more variety always helps.
+
+### Leader Diversity
+
+Encourages diverse leader classes across units. Each unit gets a leader (first character with leader effect, then first with valid class data), and unique leader classes earn bonuses.
+
+### Using Presets
+
+Quick configurations for common playstyles:
+
+```bash
+# Balanced: good mix of offense and support
+uv run unicorn-rapport solve-units --units 4,3,4,3,4,3 --preset balanced
+
+# Offensive: prioritize ranged attacks and mobility
+uv run unicorn-rapport solve-units --units 4,3,4,3,4,3 --preset offensive
+
+# Defensive: prioritize healing and sturdy units
+uv run unicorn-rapport solve-units --units 4,3,4,3,4,3 --preset defensive
+
+# Magic-heavy: prioritize spellcasters
+uv run unicorn-rapport solve-units --units 4,3,4,3,4,3 --preset magic-heavy
+```
+
+### Customizing Weights
+
+Edit `config/combat_scoring.json` to fine-tune:
+
+```json
+{
+  "coverage": {
+    "enabled": true,
+    "assist_type_weights": {
+      "ranged": 0.7,  // Increase ranged importance
+      "magick": 0.5,
+      "healing": 0.3   // Decrease healing importance
+    },
+    "unit_type_weights": {
+      "infantry": 0.3,
+      "cavalry": 0.3,
+      "flying": 0.3
+    },
+    "target_multiplier": 1.0  // 1.0 = soft, 0.0 = hard cap
+  },
+  "diversity": {
+    "enabled": true,
+    "unique_leader_bonus": 1.5,    // Reward unique leaders more
+    "duplicate_leader_penalty": 0.3, // Penalize duplicates less
+    "mode": "class"               // How to identify unique leaders
+  }
+}
+```
+
+### CLI Flags
+
+Override config settings with CLI flags:
+
+```bash
+# Disable coverage temporarily
+uv run unicorn-rapport solve-units --units 4,3,4,3,4,3 --disable-coverage
+
+# Change diversity mode
+uv run unicorn-rapport solve-units --units 4,3,4,3,4,3 --diversity-mode unit_type
+```
