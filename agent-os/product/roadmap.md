@@ -271,7 +271,7 @@ Core principles guiding combat scoring and team composition enhancements:
 
 ### Code Quality
 - [x] Extract all relevant business logic from CLI to core.py to adhere to standards.
-- [ ] Add FileStorage usage in CLI (currently uses direct functions)
+- [x] Add FileStorage usage in CLI (currently uses direct functions)
 - [ ] Implement structured logging in CLI commands
 - [ ] Add API response envelope to all JSON outputs (currently only benchmark)
 

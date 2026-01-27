@@ -18,7 +18,7 @@ Defaults:
 - `config/combat_scoring.json` (optional, combat metadata)
 
 Outputs:
-- `out/solution.json`
+- `out/solution.json` (API response envelope)
 - `out/summary.txt`
 
 ## Input formats
@@ -109,6 +109,7 @@ Or provide a JSON list:
 - If roster size exceeds total slots, the solver drops the least promising whitelist-compatible clusters.
 - Results are deterministic for the same seed.
 - When class metadata is available, combat score is used as a tie-breaker after rapport.
+- CLI emits structured JSONL logs to stderr (e.g., `2> logs.jsonl`).
 
 ## Combat metadata (optional)
 
@@ -188,7 +189,7 @@ uv run unicorn-rapport benchmark-units \
 ```
 
 Outputs:
-- `out/benchmark.json`
+- `out/benchmark.json` (API response envelope)
 - `out/benchmark.txt`
 
 ### Combat Scoring JSON
@@ -214,7 +215,34 @@ Outputs:
 
 ### Combat output
 
-`out/solution.json` includes a `combat` object:
+`out/solution.json` uses the API response envelope; the solution lives under `data`.
+
+```json
+{
+  "data": {
+    "units": [],
+    "unit_rapports": [],
+    "total_rapports": 0,
+    "unassigned": [],
+    "seed": 0,
+    "restarts": 50,
+    "swap_iterations": 200,
+    "combat": {
+      "unit_scores": [],
+      "unit_breakdowns": [],
+      "total_score": 0,
+      "coverage": {},
+      "diversity": {}
+    }
+  },
+  "error": null,
+  "meta": {
+    "timestamp": "2026-01-27T00:00:00Z"
+  }
+}
+```
+
+The `combat` object contains:
 
 - `unit_scores`: combat score per unit
 - `unit_breakdowns`: per-unit role/capability counts and unknown members
@@ -222,6 +250,17 @@ Outputs:
 - `coverage`: army-level coverage breakdown (assist types, unit types)
 - `diversity`: leader diversity breakdown (leaders, unique count, score)
 - `army_total_score`: total score including unit + coverage + diversity
+
+## Syncing rapports
+
+Use `sync-rapports` to normalize rapport pairs in the dataset file.
+
+Outputs:
+- Dataset JSON at `--out` (raw dataset format)
+- `out/sync-rapports.json` report (API response envelope)
+
+The report payload includes `changed`, `output_path`, and `stats` (added pairs,
+duplicates, skipped entries).
 
 ## Army Coverage & Diversity (Phase 2)
 

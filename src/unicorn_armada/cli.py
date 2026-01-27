@@ -3,12 +3,15 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated
+from uuid import uuid4
 
 import typer
 
 from .combat import format_diagnostic
 from .core import ValidationError, run_benchmark, run_solve, run_sync_rapports
 from .io import FileStorage, InputError
+from .logging import Events, Logger
+from .models import RapportSyncReport
 from .responses import APIResponse
 
 if TYPE_CHECKING:
@@ -22,6 +25,7 @@ DEFAULT_WHITELIST = Path("config/whitelist.csv")
 DEFAULT_BLACKLIST = Path("config/blacklist.csv")
 DEFAULT_CHARACTER_CLASSES = Path("config/character_classes.csv")
 DEFAULT_COMBAT_SCORING = Path("config/combat_scoring.json")
+DEFAULT_SYNC_REPORT = Path("out/sync-rapports.json")
 
 
 @app.callback()
@@ -142,8 +146,29 @@ def solve_units(
         bool, typer.Option(help="Enable detailed combat breakdown in summary")
     ] = False,
 ) -> None:
+    logger = Logger(run_id=uuid4().hex)
     storage = FileStorage()
     dataset_path = dataset or DEFAULT_DATASET
+    logger.info(
+        Events.RUN_STARTED,
+        "solve-units started",
+        data={
+            "command": "solve-units",
+            "dataset": str(dataset_path),
+            "roster": str(roster) if roster else None,
+            "units": units,
+            "units_file": str(units_file) if units_file else None,
+            "whitelist": str(whitelist) if whitelist else None,
+            "blacklist": str(blacklist) if blacklist else None,
+            "seed": seed,
+            "restarts": restarts,
+            "swap_iterations": swap_iterations,
+            "min_combat_score": min_combat_score,
+            "out": str(out),
+            "summary": str(summary),
+            "combat_summary": combat_summary,
+        },
+    )
     try:
         result = run_solve(
             storage=storage,
@@ -164,20 +189,49 @@ def solve_units(
             default_blacklist_path=DEFAULT_BLACKLIST,
         )
     except (ValidationError, InputError) as exc:
+        logger.error(Events.RUN_FAILED, "solve-units failed", data={"error": str(exc)})
         raise typer.BadParameter(str(exc)) from exc
 
     for warning in result.warnings:
         if warning.severity == "warning":
             typer.echo(f"Warning: {warning.message}")
+            logger.warn(
+                "warning_emitted",
+                warning.message,
+                data={"severity": warning.severity},
+            )
         else:
             typer.echo(warning.message)
+            logger.info(
+                "info_emitted",
+                warning.message,
+                data={"severity": warning.severity},
+            )
     for diagnostic in result.combat_diagnostics:
         typer.echo(format_diagnostic(diagnostic))
+        if diagnostic.severity == "error":
+            logger.error(
+                "diagnostic_emitted",
+                diagnostic.message,
+                data={"code": diagnostic.code, "subject": diagnostic.subject},
+            )
+        else:
+            logger.warn(
+                "diagnostic_emitted",
+                diagnostic.message,
+                data={"code": diagnostic.code, "subject": diagnostic.subject},
+            )
 
     solution = result.solution
 
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(solution.model_dump_json(indent=2))
+    response = APIResponse.success(solution)
+    out.write_text(response.model_dump_json(indent=2) + "\n")
+    logger.info(
+        Events.DATA_WRITTEN,
+        "solution output written",
+        data={"path": str(out)},
+    )
 
     summary.parent.mkdir(parents=True, exist_ok=True)
     write_summary(
@@ -187,10 +241,23 @@ def solve_units(
         combat_summary,
         result.combat_scoring,
     )
+    logger.info(
+        Events.DATA_WRITTEN,
+        "summary output written",
+        data={"path": str(summary)},
+    )
 
     typer.echo(f"Total rapports: {solution.total_rapports}")
     typer.echo(f"Wrote solution to {out}")
     typer.echo(f"Wrote summary to {summary}")
+    logger.info(
+        Events.RUN_COMPLETED,
+        "solve-units completed",
+        data={
+            "total_rapports": solution.total_rapports,
+            "combat_total": solution.combat.total_score if solution.combat else None,
+        },
+    )
 
 
 @app.command()
@@ -235,8 +302,27 @@ def benchmark_units(
         "out/benchmark.txt"
     ),
 ) -> None:
+    logger = Logger(run_id=uuid4().hex)
     storage = FileStorage()
     dataset_path = dataset or DEFAULT_DATASET
+    logger.info(
+        Events.RUN_STARTED,
+        "benchmark-units started",
+        data={
+            "command": "benchmark-units",
+            "dataset": str(dataset_path),
+            "roster": str(roster) if roster else None,
+            "units": units,
+            "units_file": str(units_file) if units_file else None,
+            "whitelist": str(whitelist) if whitelist else None,
+            "blacklist": str(blacklist) if blacklist else None,
+            "seed": seed,
+            "trials": trials,
+            "unit_samples": unit_samples,
+            "out": str(out),
+            "summary": str(summary),
+        },
+    )
     try:
         result = run_benchmark(
             storage=storage,
@@ -256,25 +342,65 @@ def benchmark_units(
             default_blacklist_path=DEFAULT_BLACKLIST,
         )
     except (ValidationError, InputError) as exc:
+        logger.error(
+            Events.RUN_FAILED, "benchmark-units failed", data={"error": str(exc)}
+        )
         raise typer.BadParameter(str(exc)) from exc
 
     for warning in result.warnings:
         if warning.severity == "warning":
             typer.echo(f"Warning: {warning.message}")
+            logger.warn(
+                "warning_emitted",
+                warning.message,
+                data={"severity": warning.severity},
+            )
         else:
             typer.echo(warning.message)
+            logger.info(
+                "info_emitted",
+                warning.message,
+                data={"severity": warning.severity},
+            )
     for diagnostic in result.combat_diagnostics:
         typer.echo(format_diagnostic(diagnostic))
+        if diagnostic.severity == "error":
+            logger.error(
+                "diagnostic_emitted",
+                diagnostic.message,
+                data={"code": diagnostic.code, "subject": diagnostic.subject},
+            )
+        else:
+            logger.warn(
+                "diagnostic_emitted",
+                diagnostic.message,
+                data={"code": diagnostic.code, "subject": diagnostic.subject},
+            )
 
     out.parent.mkdir(parents=True, exist_ok=True)
     response = APIResponse.success(result.report)
     out.write_text(response.model_dump_json(indent=2) + "\n")
+    logger.info(
+        Events.DATA_WRITTEN,
+        "benchmark output written",
+        data={"path": str(out)},
+    )
 
     summary.parent.mkdir(parents=True, exist_ok=True)
     summary.write_text("\n".join(result.summary_lines) + "\n")
+    logger.info(
+        Events.DATA_WRITTEN,
+        "benchmark summary written",
+        data={"path": str(summary)},
+    )
 
     typer.echo(f"Wrote benchmark to {out}")
     typer.echo(f"Wrote benchmark summary to {summary}")
+    logger.info(
+        Events.RUN_COMPLETED,
+        "benchmark-units completed",
+        data={"total_trials": result.report.sample_counts.total_trials},
+    )
 
 
 @app.command()
@@ -287,51 +413,111 @@ def sync_rapports(
         Path | None,
         typer.Option(help="Output dataset JSON path (default: overwrite dataset file)"),
     ] = None,
+    report: Annotated[
+        Path,
+        typer.Option(help="Output JSON report path"),
+    ] = DEFAULT_SYNC_REPORT,
 ) -> None:
+    logger = Logger(run_id=uuid4().hex)
     dataset_path = dataset or DEFAULT_DATASET
+    logger.info(
+        Events.RUN_STARTED,
+        "sync-rapports started",
+        data={
+            "command": "sync-rapports",
+            "dataset": str(dataset_path),
+            "out": str(out) if out else None,
+            "report": str(report),
+        },
+    )
     try:
         raw_data = json.loads(dataset_path.read_text())
     except FileNotFoundError as exc:
+        logger.error(
+            Events.RUN_FAILED, "sync-rapports failed", data={"error": str(exc)}
+        )
         raise typer.BadParameter(f"Dataset not found: {dataset_path}") from exc
     except json.JSONDecodeError as exc:
+        logger.error(
+            Events.RUN_FAILED, "sync-rapports failed", data={"error": str(exc)}
+        )
         raise typer.BadParameter(f"Dataset JSON is invalid: {dataset_path}") from exc
+    logger.info(
+        Events.DATA_LOADED,
+        "raw dataset loaded",
+        data={"path": str(dataset_path)},
+    )
 
     storage = FileStorage()
     try:
         dataset_data = storage.load_dataset(dataset_path)
     except InputError as exc:
+        logger.error(
+            Events.RUN_FAILED, "sync-rapports failed", data={"error": str(exc)}
+        )
         raise typer.BadParameter(str(exc)) from exc
 
     try:
         result = run_sync_rapports(raw_data, dataset_data)
     except ValidationError as exc:
+        logger.error(
+            Events.RUN_FAILED, "sync-rapports failed", data={"error": str(exc)}
+        )
         raise typer.BadParameter(str(exc)) from exc
 
     out_path = out or dataset_path
+    wrote_dataset = False
     if not result.changed and out_path == dataset_path:
         typer.echo("Rapports already bidirectional; no changes needed.")
-        return
-
-    raw_data["rapports"] = [entry.model_dump() for entry in result.normalized]
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(raw_data, indent=2) + "\n")
-
-    stats = result.stats
-    typer.echo(f"Wrote cleaned dataset to {out_path}")
-    typer.echo(f"Added {stats.added_pairs} reciprocal pairs.")
-    if stats.added_entries:
-        typer.echo(f"Added {stats.added_entries} new rapport entries.")
-    if stats.duplicate_entries:
-        typer.echo(f"Collapsed {stats.duplicate_entries} duplicate entries.")
-    if stats.skipped_self:
-        typer.echo(f"Removed {stats.skipped_self} self-pairs.")
-    if stats.skipped_unknown:
-        typer.echo(f"Ignored {stats.skipped_unknown} pairs with unknown character ids.")
-    if stats.unknown_entry_ids:
-        typer.echo(
-            f"Warning: {stats.unknown_entry_ids} rapport entries "
-            "use unknown character ids."
+    else:
+        raw_data["rapports"] = [entry.model_dump() for entry in result.normalized]
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(raw_data, indent=2) + "\n")
+        wrote_dataset = True
+        logger.info(
+            Events.DATA_WRITTEN,
+            "dataset written",
+            data={"path": str(out_path)},
         )
+
+        stats = result.stats
+        typer.echo(f"Wrote cleaned dataset to {out_path}")
+        typer.echo(f"Added {stats.added_pairs} reciprocal pairs.")
+        if stats.added_entries:
+            typer.echo(f"Added {stats.added_entries} new rapport entries.")
+        if stats.duplicate_entries:
+            typer.echo(f"Collapsed {stats.duplicate_entries} duplicate entries.")
+        if stats.skipped_self:
+            typer.echo(f"Removed {stats.skipped_self} self-pairs.")
+        if stats.skipped_unknown:
+            typer.echo(
+                f"Ignored {stats.skipped_unknown} pairs with unknown character ids."
+            )
+        if stats.unknown_entry_ids:
+            typer.echo(
+                f"Warning: {stats.unknown_entry_ids} rapport entries "
+                "use unknown character ids."
+            )
+
+    report.parent.mkdir(parents=True, exist_ok=True)
+    report_payload = RapportSyncReport(
+        changed=result.changed,
+        output_path=str(out_path),
+        stats=result.stats,
+    )
+    report_response = APIResponse.success(report_payload)
+    report.write_text(report_response.model_dump_json(indent=2) + "\n")
+    logger.info(
+        Events.DATA_WRITTEN,
+        "sync report written",
+        data={"path": str(report)},
+    )
+    typer.echo(f"Wrote sync report to {report}")
+    logger.info(
+        Events.RUN_COMPLETED,
+        "sync-rapports completed",
+        data={"changed": result.changed, "wrote_dataset": wrote_dataset},
+    )
 
 
 def main() -> None:

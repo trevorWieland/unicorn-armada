@@ -626,3 +626,13 @@ class RapportSyncResult(BaseModel):
     changed: bool = Field(
         ..., description="Whether normalization changed the rapport list"
     )
+
+
+class RapportSyncReport(BaseModel):
+    """Report payload for sync-rapports JSON output."""
+
+    changed: bool = Field(
+        ..., description="Whether normalization changed the rapport list"
+    )
+    output_path: str = Field(..., description="Path to the dataset JSON output")
+    stats: RapportSyncStats = Field(..., description="Normalization statistics")

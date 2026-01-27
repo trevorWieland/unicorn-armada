@@ -1,10 +1,12 @@
-Total rapports: 7
-Total combat score: 10.00
-Unit 1 (3 slots): 3 rapports, 3.50 combat
-alain, rosalinde, lex
-Unit 2 (3 slots): 2 rapports, 2.50 combat
-virginia, josef, clive
-Unit 3 (3 slots): 2 rapports, 4.00 combat
-yahna, travis, chloe
+Total rapports: 12
+Total combat score: 11.50
+Unit 1 (4 slots): 3 rapports, 2.00 combat
+kitra, gilbert, virginia, travis
+Unit 2 (3 slots): 3 rapports, 3.50 combat
+alain, rosalinde, yahna
+Unit 3 (4 slots): 3 rapports, 3.50 combat
+scarlett, tatiana, josef, melisandre
+Unit 4 (3 slots): 3 rapports, 2.50 combat
+chloe, clive, lex
 Unassigned:
-adel, aramis, aubin, auch, berengaria, berenice, bruno, celeste, colm, eltolinde, fran, galadmir, gammel, gilbert, gloucester, hilda, hodrick, ithilion, jeremy, kitra, leah, lhinalagos, liza, magellan, mandrin, melisandre, miriam, monica, mordon, nina, ochlys, primm, railanor, renault, ridiel, rolf, scarlett, selvie, sharon, tatiana
+adel, aramis, aubin, auch, berengaria, berenice, bruno, celeste, colm, eltolinde, fran, galadmir, gammel, gloucester, hilda, hodrick, ithilion, jeremy, leah, lhinalagos, liza, magellan, mandrin, miriam, monica, mordon, nina, ochlys, primm, railanor, renault, ridiel, rolf, selvie, sharon
