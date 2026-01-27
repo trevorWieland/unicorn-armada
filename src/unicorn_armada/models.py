@@ -488,3 +488,141 @@ class Solution(BaseModel):
         ..., description="Number of swap improvement iterations"
     )
     combat: CombatSummary | None = Field(None, description="Combat scoring summary")
+
+
+class UserMessage(BaseModel):
+    """User-facing message produced by core workflows."""
+
+    severity: Literal["warning", "info"] = Field(
+        ..., description="Severity of the message"
+    )
+    message: Annotated[str, Field(min_length=1, description="Message text")]
+
+
+class SolveRunResult(BaseModel):
+    """Result of a solve workflow run."""
+
+    solution: Solution = Field(..., description="Solved unit composition")
+    unit_sizes: list[int] = Field(..., description="Unit sizes for this run")
+    combat_scoring: CombatScoringConfig = Field(
+        ..., description="Combat scoring configuration used"
+    )
+    warnings: list[UserMessage] = Field(
+        default_factory=list, description="Warnings to surface to the user"
+    )
+    combat_diagnostics: list[CombatDiagnostic] = Field(
+        default_factory=list, description="Combat diagnostics to surface"
+    )
+
+
+class BenchmarkStatsSummary(BaseModel):
+    """Summary stats for benchmark outputs."""
+
+    count: int = Field(..., description="Number of samples")
+    min: float = Field(..., description="Minimum score observed")
+    max: float = Field(..., description="Maximum score observed")
+    mean: float = Field(..., description="Mean score across samples")
+    p50: float = Field(..., description="Median score")
+    p75: float = Field(..., description="75th percentile score")
+    p90: float = Field(..., description="90th percentile score")
+    std: float = Field(..., description="Standard deviation of scores")
+
+
+class BenchmarkInputSummary(BaseModel):
+    """Input configuration for benchmark runs."""
+
+    seed: int = Field(..., description="Random seed used")
+    units: list[int] = Field(..., description="Unit sizes used in the benchmark")
+    trials: int = Field(..., description="Number of full assignment trials")
+    unit_samples: int = Field(..., description="Samples per unit size")
+
+
+class BenchmarkSampleCounts(BaseModel):
+    """Sample counts for benchmark runs."""
+
+    total_trials: int = Field(..., description="Total trials requested")
+    total_successes: int = Field(..., description="Successful trials")
+    total_failures: int = Field(..., description="Failed trials")
+
+
+class UnitSizeReport(BaseModel):
+    """Benchmark summary for a specific unit size."""
+
+    stats: BenchmarkStatsSummary = Field(
+        ..., description="Statistical summary for this unit size"
+    )
+    recommended_min: float = Field(
+        ..., description="Recommended minimum score for this size"
+    )
+    recommended_strict: float = Field(
+        ..., description="Recommended strict minimum score for this size"
+    )
+    samples: int = Field(..., description="Number of samples used")
+
+
+class BenchmarkReport(BaseModel):
+    """Benchmark report payload for JSON output."""
+
+    combat_available: bool = Field(..., description="Whether combat data was available")
+    inputs: BenchmarkInputSummary = Field(
+        ..., description="Input configuration for the benchmark"
+    )
+    sample_counts: BenchmarkSampleCounts = Field(
+        ..., description="Sample count summary"
+    )
+    total_score_stats: BenchmarkStatsSummary = Field(
+        ..., description="Overall score stats"
+    )
+    recommended_min_total: float = Field(
+        ..., description="Recommended minimum total score"
+    )
+    recommended_strict_total: float = Field(
+        ..., description="Recommended strict minimum total score"
+    )
+    per_unit_size: dict[str, UnitSizeReport] = Field(
+        default_factory=dict, description="Per-unit size benchmark results"
+    )
+
+
+class BenchmarkRunResult(BaseModel):
+    """Result of a benchmark workflow run."""
+
+    report: BenchmarkReport = Field(..., description="Benchmark report payload")
+    summary_lines: list[str] = Field(
+        default_factory=list, description="Summary lines for text output"
+    )
+    warnings: list[UserMessage] = Field(
+        default_factory=list, description="Warnings to surface to the user"
+    )
+    combat_diagnostics: list[CombatDiagnostic] = Field(
+        default_factory=list, description="Combat diagnostics to surface"
+    )
+
+
+class RapportSyncStats(BaseModel):
+    """Statistics for rapport synchronization."""
+
+    added_pairs: int = Field(..., description="Number of reciprocal pairs added")
+    added_entries: int = Field(..., description="Number of new rapport entries added")
+    duplicate_entries: int = Field(
+        ..., description="Number of duplicate entries collapsed"
+    )
+    skipped_self: int = Field(..., description="Number of self-pairs removed")
+    skipped_unknown: int = Field(
+        ..., description="Number of pairs with unknown ids skipped"
+    )
+    unknown_entry_ids: int = Field(
+        ..., description="Number of rapport entries with unknown ids"
+    )
+
+
+class RapportSyncResult(BaseModel):
+    """Result of rapport synchronization."""
+
+    normalized: list[RapportListEntry] = Field(
+        default_factory=list, description="Normalized rapport entries"
+    )
+    stats: RapportSyncStats = Field(..., description="Normalization statistics")
+    changed: bool = Field(
+        ..., description="Whether normalization changed the rapport list"
+    )

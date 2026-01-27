@@ -27,7 +27,7 @@ class TestCluster:
 
         cluster = Cluster(members=("alice",))
         with pytest.raises(ValidationError):
-            cluster.members = ("bob",)  # type: ignore
+            cluster.members = ("bob",)
 
 
 class TestUnitState:

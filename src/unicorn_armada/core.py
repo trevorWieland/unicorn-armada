@@ -7,25 +7,46 @@ containing business logic themselves.
 
 from __future__ import annotations
 
+import random
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
-from .combat import compute_combat_summary
-from .io import (
-    load_character_classes_csv,
-    load_combat_scoring_json,
-    load_dataset,
-    load_pairs_csv,
-    load_roster_csv,
-    load_units_json,
-    parse_units_arg,
+from .benchmark import (
+    BenchmarkStats,
+    compute_stats,
+    generate_random_assignment,
+    sample_unit_scores,
 )
-from .models import CombatScoringConfig, Dataset
-from .utils import Pair, pair_key
+from .combat import (
+    build_class_index,
+    compute_combat_summary,
+    missing_default_classes_diagnostic,
+)
+from .io import parse_units_arg
+from .models import (
+    BenchmarkInputSummary,
+    BenchmarkReport,
+    BenchmarkRunResult,
+    BenchmarkSampleCounts,
+    BenchmarkStatsSummary,
+    CombatDiagnostic,
+    CombatScoringConfig,
+    Dataset,
+    RapportListEntry,
+    RapportSyncResult,
+    RapportSyncStats,
+    SolveRunResult,
+    UnitSizeReport,
+    UserMessage,
+)
+from .solver import SolveError, solve
+from .utils import Pair, normalize_id, pair_key
 
 if TYPE_CHECKING:
     from collections.abc import Callable
     from pathlib import Path
+
+    from .protocols import StorageProtocol
 
 
 class ValidationError(ValueError):
@@ -72,7 +93,17 @@ class CombatContext:
         self.effective_classes = effective_classes
 
 
+def _format_pair(pair: Pair) -> str:
+    left, right = sorted(pair)
+    return f"{left},{right}"
+
+
+def _sort_pairs(pairs: set[Pair]) -> list[Pair]:
+    return sorted(pairs, key=lambda pair: tuple(sorted(pair)))
+
+
 def load_and_validate_problem(
+    storage: StorageProtocol,
     dataset_path: Path,
     roster_path: Path | None,
     units_str: str | None,
@@ -82,10 +113,11 @@ def load_and_validate_problem(
     default_roster_path: Path | None = None,
     default_whitelist_path: Path | None = None,
     default_blacklist_path: Path | None = None,
-) -> ProblemInputs:
+) -> tuple[ProblemInputs, list[UserMessage]]:
     """Load and validate all problem inputs.
 
     Args:
+        storage: Storage adapter for input loading.
         dataset_path: Path to the dataset JSON file.
         roster_path: Path to roster CSV, or None to use default.
         units_str: Comma-separated unit sizes, or None.
@@ -97,14 +129,16 @@ def load_and_validate_problem(
         default_blacklist_path: Default blacklist path to use if blacklist_path is None.
 
     Returns:
-        Validated ProblemInputs container.
+        Tuple of validated ProblemInputs and warning messages.
 
     Raises:
         ValidationError: If inputs fail validation.
         InputError: If files cannot be read or parsed.
     """
+    warnings: list[UserMessage] = []
+
     # Load dataset
-    dataset_data = load_dataset(dataset_path)
+    dataset_data = storage.load_dataset(dataset_path)
 
     character_ids = [character.id for character in dataset_data.characters]
     character_set = set(character_ids)
@@ -115,11 +149,11 @@ def load_and_validate_problem(
     roster_ids: list[str]
     if roster_path is None and default_roster_path is not None:
         if default_roster_path.exists():
-            roster_ids = load_roster_csv(default_roster_path)
+            roster_ids = storage.load_roster(default_roster_path)
         else:
             roster_ids = sorted(character_set)
     elif roster_path is not None:
-        roster_ids = load_roster_csv(roster_path)
+        roster_ids = storage.load_roster(roster_path)
     else:
         roster_ids = sorted(character_set)
 
@@ -140,7 +174,7 @@ def load_and_validate_problem(
 
     unit_sizes: list[int]
     if units_file_path is not None:
-        unit_sizes = load_units_json(units_file_path)
+        unit_sizes = storage.load_units(units_file_path)
     else:
         unit_sizes = parse_units_arg(units_str or "")
 
@@ -159,11 +193,11 @@ def load_and_validate_problem(
     whitelist_pairs: set[Pair]
     if whitelist_path is None and default_whitelist_path is not None:
         if default_whitelist_path.exists():
-            whitelist_pairs = load_pairs_csv(default_whitelist_path)
+            whitelist_pairs = storage.load_pairs(default_whitelist_path)
         else:
             whitelist_pairs = set()
     elif whitelist_path is not None:
-        whitelist_pairs = load_pairs_csv(whitelist_path)
+        whitelist_pairs = storage.load_pairs(whitelist_path)
     else:
         whitelist_pairs = set()
 
@@ -171,11 +205,11 @@ def load_and_validate_problem(
     blacklist_pairs: set[Pair]
     if blacklist_path is None and default_blacklist_path is not None:
         if default_blacklist_path.exists():
-            blacklist_pairs = load_pairs_csv(default_blacklist_path)
+            blacklist_pairs = storage.load_pairs(default_blacklist_path)
         else:
             blacklist_pairs = set()
     elif blacklist_path is not None:
-        blacklist_pairs = load_pairs_csv(blacklist_path)
+        blacklist_pairs = storage.load_pairs(blacklist_path)
     else:
         blacklist_pairs = set()
 
@@ -184,55 +218,82 @@ def load_and_validate_problem(
         pair for pair in whitelist_pairs if not pair.issubset(roster_set)
     }
     if invalid_whitelist:
-        raise ValidationError("Whitelist pair contains missing roster ids")
+        formatted = "; ".join(
+            _format_pair(pair) for pair in _sort_pairs(invalid_whitelist)
+        )
+        raise ValidationError(
+            f"Whitelist pair contains missing roster ids: {formatted}"
+        )
 
     invalid_rapports = {pair for pair in whitelist_pairs if pair not in rapport_edges}
     if invalid_rapports:
-        raise ValidationError("Whitelist pair is not a valid rapport")
+        formatted = "; ".join(
+            _format_pair(pair) for pair in _sort_pairs(invalid_rapports)
+        )
+        raise ValidationError(f"Whitelist pair is not a valid rapport: {formatted}")
 
     # Filter blacklist (warn, don't error)
+    ignored_blacklist = {
+        pair for pair in blacklist_pairs if not pair.issubset(roster_set)
+    }
+    if ignored_blacklist:
+        formatted = "; ".join(
+            _format_pair(pair) for pair in _sort_pairs(ignored_blacklist)
+        )
+        warnings.append(
+            UserMessage(
+                severity="warning",
+                message=f"ignoring blacklist pairs not in roster: {formatted}",
+            )
+        )
     blacklist_pairs = {pair for pair in blacklist_pairs if pair.issubset(roster_set)}
 
-    return ProblemInputs(
-        dataset=dataset_data,
-        roster_ids=roster_ids,
-        unit_sizes=unit_sizes,
-        rapport_edges=rapport_edges,
-        whitelist_pairs=whitelist_pairs,
-        blacklist_pairs=blacklist_pairs,
+    return (
+        ProblemInputs(
+            dataset=dataset_data,
+            roster_ids=roster_ids,
+            unit_sizes=unit_sizes,
+            rapport_edges=rapport_edges,
+            whitelist_pairs=whitelist_pairs,
+            blacklist_pairs=blacklist_pairs,
+        ),
+        warnings,
     )
 
 
 def load_combat_context(
+    storage: StorageProtocol,
     dataset: Dataset,
     roster_set: set[str],
     combat_scoring_path: Path | None = None,
     character_classes_path: Path | None = None,
-) -> CombatContext:
+) -> tuple[CombatContext, list[UserMessage], list[CombatDiagnostic]]:
     """Load combat scoring context.
 
     Args:
+        storage: Storage adapter for input loading.
         dataset: The loaded dataset.
         roster_set: Set of character IDs in the roster.
         combat_scoring_path: Path to combat scoring config, or None.
         character_classes_path: Path to class overrides CSV, or None.
 
     Returns:
-        CombatContext with scoring config and effective classes.
+        Tuple of CombatContext, warning messages, and combat diagnostics.
 
     Raises:
         ValidationError: If validation fails.
         InputError: If files cannot be read.
     """
-    from .combat import build_class_index
+    warnings: list[UserMessage] = []
+    diagnostics: list[CombatDiagnostic] = []
 
     combat_scoring = CombatScoringConfig()
     if combat_scoring_path is not None and combat_scoring_path.exists():
-        combat_scoring = load_combat_scoring_json(combat_scoring_path)
+        combat_scoring = storage.load_scoring(combat_scoring_path)
 
     overrides: dict[str, str] = {}
     if character_classes_path is not None and character_classes_path.exists():
-        overrides = load_character_classes_csv(character_classes_path)
+        overrides = storage.load_character_classes(character_classes_path)
 
     character_set = {character.id for character in dataset.characters}
     unknown_override_characters = set(overrides) - character_set
@@ -240,6 +301,17 @@ def load_combat_context(
         formatted = ", ".join(sorted(unknown_override_characters))
         raise ValidationError(
             f"Character class overrides contain unknown ids: {formatted}"
+        )
+
+    if dataset.classes and not dataset.character_classes:
+        warnings.append(
+            UserMessage(
+                severity="warning",
+                message=(
+                    "dataset character classes are empty; combat scoring will "
+                    "treat all members as unknown."
+                ),
+            )
         )
 
     class_index = build_class_index(dataset.classes)
@@ -287,9 +359,18 @@ def load_combat_context(
     effective_classes = dict(default_classes)
     effective_classes.update(overrides)
 
-    return CombatContext(
-        scoring=combat_scoring,
-        effective_classes=effective_classes,
+    if dataset.classes and dataset.character_classes:
+        missing_defaults = roster_set - set(effective_classes)
+        if missing_defaults:
+            diagnostics.append(missing_default_classes_diagnostic(missing_defaults))
+
+    return (
+        CombatContext(
+            scoring=combat_scoring,
+            effective_classes=effective_classes,
+        ),
+        warnings,
+        diagnostics,
     )
 
 
@@ -391,3 +472,373 @@ def make_combat_score_fn(
         ).total_score
 
     return score_fn
+
+
+def _stats_summary(stats: BenchmarkStats) -> BenchmarkStatsSummary:
+    return BenchmarkStatsSummary(
+        count=stats.count,
+        min=stats.minimum,
+        max=stats.maximum,
+        mean=stats.mean,
+        p50=stats.median,
+        p75=stats.p75,
+        p90=stats.p90,
+        std=stats.std,
+    )
+
+
+def run_solve(
+    storage: StorageProtocol,
+    dataset_path: Path,
+    roster_path: Path | None,
+    units_str: str | None,
+    units_file_path: Path | None,
+    whitelist_path: Path | None,
+    blacklist_path: Path | None,
+    combat_scoring_path: Path | None,
+    character_classes_path: Path | None,
+    *,
+    seed: int,
+    restarts: int,
+    swap_iterations: int,
+    min_combat_score: float | None,
+    default_roster_path: Path | None = None,
+    default_whitelist_path: Path | None = None,
+    default_blacklist_path: Path | None = None,
+) -> SolveRunResult:
+    inputs, warnings = load_and_validate_problem(
+        storage,
+        dataset_path,
+        roster_path,
+        units_str,
+        units_file_path,
+        whitelist_path,
+        blacklist_path,
+        default_roster_path=default_roster_path,
+        default_whitelist_path=default_whitelist_path,
+        default_blacklist_path=default_blacklist_path,
+    )
+
+    combat_context, combat_warnings, combat_diagnostics = load_combat_context(
+        storage,
+        inputs.dataset,
+        inputs.roster_set,
+        combat_scoring_path=combat_scoring_path,
+        character_classes_path=character_classes_path,
+    )
+    warnings.extend(combat_warnings)
+
+    combat_score_fn = make_combat_score_fn(
+        inputs.dataset,
+        combat_context.effective_classes,
+        combat_context.scoring,
+    )
+
+    if min_combat_score is not None and combat_score_fn is None:
+        raise ValidationError(
+            "Minimum combat score requires class data and character classes"
+        )
+
+    try:
+        solution = solve(
+            inputs.roster_ids,
+            inputs.unit_sizes,
+            inputs.rapport_edges,
+            inputs.whitelist_pairs,
+            inputs.blacklist_pairs,
+            seed=seed,
+            restarts=restarts,
+            swap_iterations=swap_iterations,
+            combat_score_fn=combat_score_fn,
+            min_combat_score=min_combat_score,
+        )
+    except SolveError as exc:
+        raise ValidationError(str(exc)) from exc
+
+    if not inputs.dataset.classes or not combat_context.effective_classes:
+        computed_combat = compute_combat_summary(
+            [[] for _ in solution.units],
+            {},
+            [],
+            CombatScoringConfig(),
+        )
+    else:
+        computed_combat = compute_combat_summary(
+            solution.units,
+            combat_context.effective_classes,
+            inputs.dataset.classes,
+            combat_context.scoring,
+        )
+    solution = solution.model_copy(update={"combat": computed_combat})
+
+    return SolveRunResult(
+        solution=solution,
+        unit_sizes=inputs.unit_sizes,
+        combat_scoring=combat_context.scoring,
+        warnings=warnings,
+        combat_diagnostics=combat_diagnostics,
+    )
+
+
+def run_benchmark(
+    storage: StorageProtocol,
+    dataset_path: Path,
+    roster_path: Path | None,
+    units_str: str | None,
+    units_file_path: Path | None,
+    whitelist_path: Path | None,
+    blacklist_path: Path | None,
+    combat_scoring_path: Path | None,
+    character_classes_path: Path | None,
+    *,
+    seed: int,
+    trials: int,
+    unit_samples: int,
+    default_roster_path: Path | None = None,
+    default_whitelist_path: Path | None = None,
+    default_blacklist_path: Path | None = None,
+) -> BenchmarkRunResult:
+    inputs, warnings = load_and_validate_problem(
+        storage,
+        dataset_path,
+        roster_path,
+        units_str,
+        units_file_path,
+        whitelist_path,
+        blacklist_path,
+        default_roster_path=default_roster_path,
+        default_whitelist_path=default_whitelist_path,
+        default_blacklist_path=default_blacklist_path,
+    )
+
+    combat_context, combat_warnings, combat_diagnostics = load_combat_context(
+        storage,
+        inputs.dataset,
+        inputs.roster_set,
+        combat_scoring_path=combat_scoring_path,
+        character_classes_path=character_classes_path,
+    )
+    warnings.extend(combat_warnings)
+
+    combat_available = bool(inputs.dataset.classes and combat_context.effective_classes)
+    rng = random.Random(seed)
+
+    per_unit_size_stats: dict[str, BenchmarkStats] = {}
+    per_unit_size_report: dict[str, UnitSizeReport] = {}
+    for size in range(2, 7):
+        values = []
+        if combat_available:
+            values = sample_unit_scores(
+                inputs.roster_ids,
+                size,
+                unit_samples,
+                rng,
+                combat_context.effective_classes,
+                inputs.dataset.classes,
+                combat_context.scoring,
+            )
+        stats = compute_stats(values)
+        size_key = str(size)
+        per_unit_size_stats[size_key] = stats
+        per_unit_size_report[size_key] = UnitSizeReport(
+            stats=_stats_summary(stats),
+            recommended_min=stats.p75,
+            recommended_strict=stats.p90,
+            samples=stats.count,
+        )
+
+    assignment_scores: list[float] = []
+    failures = 0
+    if combat_available:
+        for _ in range(trials):
+            try:
+                assignment = generate_random_assignment(
+                    inputs.roster_ids,
+                    inputs.unit_sizes,
+                    inputs.rapport_edges,
+                    inputs.whitelist_pairs,
+                    inputs.blacklist_pairs,
+                    rng,
+                )
+            except SolveError as exc:
+                raise ValidationError(str(exc)) from exc
+            if assignment is None:
+                failures += 1
+                continue
+            score = compute_combat_summary(
+                assignment,
+                combat_context.effective_classes,
+                inputs.dataset.classes,
+                combat_context.scoring,
+            ).total_score
+            assignment_scores.append(score)
+
+    total_stats = compute_stats(assignment_scores)
+
+    report = BenchmarkReport(
+        combat_available=combat_available,
+        inputs=BenchmarkInputSummary(
+            seed=seed,
+            units=inputs.unit_sizes,
+            trials=trials,
+            unit_samples=unit_samples,
+        ),
+        sample_counts=BenchmarkSampleCounts(
+            total_trials=trials,
+            total_successes=total_stats.count,
+            total_failures=failures,
+        ),
+        total_score_stats=_stats_summary(total_stats),
+        recommended_min_total=total_stats.p75,
+        recommended_strict_total=total_stats.p90,
+        per_unit_size=per_unit_size_report,
+    )
+
+    summary_lines = [
+        "Combat benchmark",
+        f"Combat data: {'available' if combat_available else 'missing'}",
+        (
+            "Total combat score (assignments): "
+            f"n={total_stats.count}, failures={failures}, "
+            f"mean={total_stats.mean:.2f}, p50={total_stats.median:.2f}, "
+            f"p75={total_stats.p75:.2f}, p90={total_stats.p90:.2f}"
+        ),
+        (
+            "Recommended minimum total: "
+            f"{total_stats.p75:.2f} (strict {total_stats.p90:.2f})"
+        ),
+        "Per-unit size benchmarks (n, mean, p75, p90):",
+    ]
+    if not combat_available:
+        summary_lines.append("Combat data missing; scores default to 0.")
+    for size in range(2, 7):
+        stats = per_unit_size_stats[str(size)]
+        summary_lines.append(
+            "Size "
+            f"{size}: n={stats.count}, mean={stats.mean:.2f}, "
+            f"p75={stats.p75:.2f}, p90={stats.p90:.2f}"
+        )
+
+    return BenchmarkRunResult(
+        report=report,
+        summary_lines=summary_lines,
+        warnings=warnings,
+        combat_diagnostics=combat_diagnostics,
+    )
+
+
+def normalize_rapport_entries(
+    rapport_entries: list[object],
+    character_ids: set[str],
+) -> RapportSyncResult:
+    id_order: list[str] = []
+    rapport_map: dict[str, list[str]] = {}
+    duplicate_entries = 0
+    skipped_self = 0
+    skipped_unknown = 0
+    unknown_entry_ids: set[str] = set()
+
+    for entry in rapport_entries:
+        if not isinstance(entry, dict):
+            continue
+        entry_dict = cast("dict[str, object]", entry)
+        raw_id = normalize_id(str(entry_dict.get("id", "")))
+        if not raw_id:
+            continue
+        if raw_id not in character_ids:
+            unknown_entry_ids.add(raw_id)
+        raw_pairs = entry_dict.get("pairs") or []
+        if not isinstance(raw_pairs, list):
+            raise ValidationError(f"Rapport pairs for {raw_id} must be a list of ids")
+        cleaned_pairs: list[str] = []
+        seen: set[str] = set()
+        for partner in raw_pairs:
+            partner_id = normalize_id(str(partner))
+            if not partner_id:
+                continue
+            if partner_id == raw_id:
+                skipped_self += 1
+                continue
+            if partner_id in seen:
+                continue
+            seen.add(partner_id)
+            cleaned_pairs.append(partner_id)
+        if raw_id in rapport_map:
+            duplicate_entries += 1
+            existing = rapport_map[raw_id]
+            existing_set = set(existing)
+            for partner_id in cleaned_pairs:
+                if partner_id not in existing_set:
+                    existing.append(partner_id)
+                    existing_set.add(partner_id)
+        else:
+            rapport_map[raw_id] = cleaned_pairs
+            id_order.append(raw_id)
+
+    adjacency = {character_id: set() for character_id in character_ids}
+    for character_id, partners in rapport_map.items():
+        if character_id not in character_ids:
+            continue
+        for partner_id in partners:
+            if partner_id not in character_ids:
+                skipped_unknown += 1
+                continue
+            if partner_id == character_id:
+                skipped_self += 1
+                continue
+            adjacency[character_id].add(partner_id)
+            adjacency[partner_id].add(character_id)
+
+    normalized_entries: list[RapportListEntry] = []
+    added_pairs = 0
+    added_entries = 0
+
+    for character_id in id_order:
+        pairs = list(rapport_map.get(character_id, []))
+        if character_id in character_ids:
+            missing = sorted(adjacency[character_id] - set(pairs))
+            if missing:
+                pairs.extend(missing)
+                added_pairs += len(missing)
+        normalized_entries.append(RapportListEntry(id=character_id, pairs=pairs))
+
+    missing_ids = sorted(
+        character_id
+        for character_id in character_ids
+        if character_id not in rapport_map and adjacency[character_id]
+    )
+    for character_id in missing_ids:
+        partners = sorted(adjacency[character_id])
+        normalized_entries.append(RapportListEntry(id=character_id, pairs=partners))
+        added_entries += 1
+        added_pairs += len(partners)
+
+    stats = RapportSyncStats(
+        added_pairs=added_pairs,
+        added_entries=added_entries,
+        duplicate_entries=duplicate_entries,
+        skipped_self=skipped_self,
+        skipped_unknown=skipped_unknown,
+        unknown_entry_ids=len(unknown_entry_ids),
+    )
+    normalized_payload = [entry.model_dump() for entry in normalized_entries]
+    changed = normalized_payload != rapport_entries
+    return RapportSyncResult(
+        normalized=normalized_entries,
+        stats=stats,
+        changed=changed,
+    )
+
+
+def run_sync_rapports(raw_data: object, dataset: Dataset) -> RapportSyncResult:
+    if not isinstance(raw_data, dict):
+        raise ValidationError("Dataset JSON must be an object")
+
+    raw_map = cast("dict[str, object]", raw_data)
+    raw_rapports = raw_map.get("rapports") or []
+    if not isinstance(raw_rapports, list):
+        raise ValidationError("Dataset rapports must be a list")
+
+    character_ids = {character.id for character in dataset.characters}
+    rapport_entries = cast("list[object]", raw_rapports)
+    return normalize_rapport_entries(rapport_entries, character_ids)
