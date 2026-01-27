@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import json
 import random
-from collections.abc import Callable
 from pathlib import Path
-from typing import TypedDict
+from typing import TYPE_CHECKING, Annotated, TypedDict
 
 import typer
 
@@ -26,8 +25,12 @@ from .io import (
     parse_units_arg,
 )
 from .models import CombatScoringConfig
+from .responses import APIResponse
 from .solver import SolveError, solve
 from .utils import Pair, normalize_id, pair_key
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class RapportEntry(TypedDict):
@@ -70,12 +73,11 @@ def write_summary(path: Path, solution, units: list[int]) -> None:
     if solution.combat is not None:
         lines.append(f"Total combat score: {solution.combat.total_score:.2f}")
     for idx, (unit, score) in enumerate(
-        zip(solution.units, solution.unit_rapports), start=1
+        zip(solution.units, solution.unit_rapports, strict=False), start=1
     ):
         combat_score = None
-        if solution.combat is not None:
-            if idx - 1 < len(solution.combat.unit_scores):
-                combat_score = solution.combat.unit_scores[idx - 1]
+        if solution.combat is not None and idx - 1 < len(solution.combat.unit_scores):
+            combat_score = solution.combat.unit_scores[idx - 1]
         if combat_score is None:
             lines.append(f"Unit {idx} ({units[idx - 1]} slots): {score} rapports")
         else:
@@ -411,45 +413,46 @@ def load_combat_context(dataset_data, roster_set: set[str]):
 
 @app.command()
 def solve_units(
-    dataset: Path | None = typer.Option(
-        None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
+    dataset: Annotated[
+        Path | None,
+        typer.Option(help="Path to dataset JSON (default: data/dataset.json)"),
+    ] = None,
+    roster: Annotated[
+        Path | None,
+        typer.Option(
+            help="CSV of available character ids (default: config/roster.csv)"
+        ),
+    ] = None,
+    units: Annotated[
+        str | None,
+        typer.Option(help="Comma-separated list of unit sizes (e.g. 4,3,4,3)"),
+    ] = None,
+    units_file: Annotated[
+        Path | None,
+        typer.Option(help="JSON file containing unit sizes list"),
+    ] = None,
+    whitelist: Annotated[
+        Path | None,
+        typer.Option(help="CSV of required pairs (default: config/whitelist.csv)"),
+    ] = None,
+    blacklist: Annotated[
+        Path | None,
+        typer.Option(help="CSV of forbidden pairs (default: config/blacklist.csv)"),
+    ] = None,
+    seed: Annotated[int, typer.Option(help="Random seed for deterministic output")] = 0,
+    restarts: Annotated[int, typer.Option(help="Greedy restart attempts")] = 50,
+    swap_iterations: Annotated[
+        int, typer.Option(help="Swap-improvement iterations")
+    ] = 200,
+    min_combat_score: Annotated[
+        float | None,
+        typer.Option(help="Minimum total combat score required for a solution"),
+    ] = None,
+    out: Annotated[Path, typer.Option(help="Output JSON path")] = Path(
+        "out/solution.json"
     ),
-    roster: Path | None = typer.Option(
-        None,
-        "--roster",
-        help="CSV of available character ids (default: config/roster.csv)",
-    ),
-    units: str | None = typer.Option(
-        None,
-        "--units",
-        help="Comma-separated list of unit sizes (e.g. 4,3,4,3)",
-    ),
-    units_file: Path | None = typer.Option(
-        None, "--units-file", help="JSON file containing unit sizes list"
-    ),
-    whitelist: Path | None = typer.Option(
-        None,
-        "--whitelist",
-        help="CSV of required pairs (default: config/whitelist.csv)",
-    ),
-    blacklist: Path | None = typer.Option(
-        None,
-        "--blacklist",
-        help="CSV of forbidden pairs (default: config/blacklist.csv)",
-    ),
-    seed: int = typer.Option(0, help="Random seed for deterministic output"),
-    restarts: int = typer.Option(50, help="Greedy restart attempts"),
-    swap_iterations: int = typer.Option(200, help="Swap-improvement iterations"),
-    min_combat_score: float | None = typer.Option(
-        None,
-        "--min-combat-score",
-        help="Minimum total combat score required for a solution",
-    ),
-    out: Path = typer.Option(
-        Path("out/solution.json"), "--out", help="Output JSON path"
-    ),
-    summary: Path = typer.Option(
-        Path("out/summary.txt"), "--summary", help="Summary output path"
+    summary: Annotated[Path, typer.Option(help="Summary output path")] = Path(
+        "out/summary.txt"
     ),
 ) -> None:
     (
@@ -530,42 +533,44 @@ def solve_units(
 
 @app.command()
 def benchmark_units(
-    dataset: Path | None = typer.Option(
-        None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
+    dataset: Annotated[
+        Path | None,
+        typer.Option(help="Path to dataset JSON (default: data/dataset.json)"),
+    ] = None,
+    roster: Annotated[
+        Path | None,
+        typer.Option(
+            help="CSV of available character ids (default: config/roster.csv)"
+        ),
+    ] = None,
+    units: Annotated[
+        str | None,
+        typer.Option(help="Comma-separated list of unit sizes (e.g. 4,3,4,3)"),
+    ] = None,
+    units_file: Annotated[
+        Path | None,
+        typer.Option(help="JSON file containing unit sizes list"),
+    ] = None,
+    whitelist: Annotated[
+        Path | None,
+        typer.Option(help="CSV of required pairs (default: config/whitelist.csv)"),
+    ] = None,
+    blacklist: Annotated[
+        Path | None,
+        typer.Option(help="CSV of forbidden pairs (default: config/blacklist.csv)"),
+    ] = None,
+    seed: Annotated[int, typer.Option(help="Random seed for deterministic output")] = 0,
+    trials: Annotated[
+        int, typer.Option(help="Full-assignment samples to generate")
+    ] = 200,
+    unit_samples: Annotated[
+        int, typer.Option(help="Random unit samples per size (2-6 slots)")
+    ] = 2000,
+    out: Annotated[Path, typer.Option(help="Output JSON path")] = Path(
+        "out/benchmark.json"
     ),
-    roster: Path | None = typer.Option(
-        None,
-        "--roster",
-        help="CSV of available character ids (default: config/roster.csv)",
-    ),
-    units: str | None = typer.Option(
-        None,
-        "--units",
-        help="Comma-separated list of unit sizes (e.g. 4,3,4,3)",
-    ),
-    units_file: Path | None = typer.Option(
-        None, "--units-file", help="JSON file containing unit sizes list"
-    ),
-    whitelist: Path | None = typer.Option(
-        None,
-        "--whitelist",
-        help="CSV of required pairs (default: config/whitelist.csv)",
-    ),
-    blacklist: Path | None = typer.Option(
-        None,
-        "--blacklist",
-        help="CSV of forbidden pairs (default: config/blacklist.csv)",
-    ),
-    seed: int = typer.Option(0, help="Random seed for deterministic output"),
-    trials: int = typer.Option(200, help="Full-assignment samples to generate"),
-    unit_samples: int = typer.Option(
-        2000, help="Random unit samples per size (2-6 slots)"
-    ),
-    out: Path = typer.Option(
-        Path("out/benchmark.json"), "--out", help="Output JSON path"
-    ),
-    summary: Path = typer.Option(
-        Path("out/benchmark.txt"), "--summary", help="Summary output path"
+    summary: Annotated[Path, typer.Option(help="Summary output path")] = Path(
+        "out/benchmark.txt"
     ),
 ) -> None:
     (
@@ -655,7 +660,8 @@ def benchmark_units(
     }
 
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, indent=2) + "\n")
+    response = APIResponse.success(report)
+    out.write_text(response.model_dump_json(indent=2) + "\n")
 
     summary.parent.mkdir(parents=True, exist_ok=True)
     summary_lines = [
@@ -690,14 +696,14 @@ def benchmark_units(
 
 @app.command()
 def sync_rapports(
-    dataset: Path | None = typer.Option(
-        None, "--dataset", help="Path to dataset JSON (default: data/dataset.json)"
-    ),
-    out: Path | None = typer.Option(
-        None,
-        "--out",
-        help="Output dataset JSON path (default: overwrite dataset file)",
-    ),
+    dataset: Annotated[
+        Path | None,
+        typer.Option(help="Path to dataset JSON (default: data/dataset.json)"),
+    ] = None,
+    out: Annotated[
+        Path | None,
+        typer.Option(help="Output dataset JSON path (default: overwrite dataset file)"),
+    ] = None,
 ) -> None:
     dataset_path = dataset or DEFAULT_DATASET
     try:

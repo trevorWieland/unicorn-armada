@@ -90,7 +90,7 @@ class RapportListEntry(BaseModel):
         return cleaned
 
     @model_validator(mode="after")
-    def validate_pairs(self) -> "RapportListEntry":
+    def validate_pairs(self) -> RapportListEntry:
         if self.id in self.pairs:
             raise ValueError("Rapport list cannot include self in pairs")
         return self
@@ -103,18 +103,18 @@ class Dataset(BaseModel):
     rapports: list[RapportListEntry] = Field(
         ..., description="Rapport pair data for characters"
     )
-    classes: list["ClassDefinition"] = Field(
+    classes: list[ClassDefinition] = Field(
         default_factory=list, description="Class definitions with roles and stats"
     )
-    class_lines: list["ClassLine"] = Field(
+    class_lines: list[ClassLine] = Field(
         default_factory=list, description="Class promotion lines"
     )
-    character_classes: dict[str, "CharacterClassInfo"] = Field(
+    character_classes: dict[str, CharacterClassInfo] = Field(
         default_factory=dict, description="Default class assignments per character"
     )
 
     @model_validator(mode="after")
-    def validate_class_references(self) -> "Dataset":
+    def validate_class_references(self) -> Dataset:
         class_ids = {entry.id for entry in self.classes}
         if len(class_ids) != len(self.classes):
             raise ValueError("Class definitions contain duplicate ids")

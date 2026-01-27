@@ -2,16 +2,19 @@ from __future__ import annotations
 
 import csv
 import json
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
 
 from .models import CombatScoringConfig, Dataset
 from .utils import Pair, normalize_id, normalize_tag, pair_key
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
 
 class InputError(ValueError):
-    pass
+    """Error raised when input files cannot be read or parsed."""
 
 
 def load_dataset(path: Path) -> Dataset:
@@ -153,3 +156,44 @@ def load_pairs_csv(path: Path) -> set[Pair]:
             continue
         pairs.add(pair_key(left, right))
     return pairs
+
+
+class FileStorage:
+    """File-based storage implementation.
+
+    Implements StorageProtocol by delegating to the module-level
+    loader functions. This class enables dependency injection and
+    makes testing easier with mock implementations.
+    """
+
+    def load_dataset(self, path: Path) -> Dataset:
+        """Load and validate a dataset from the given path."""
+        return load_dataset(path)
+
+    def load_roster(self, path: Path) -> list[str]:
+        """Load roster character IDs from the given path."""
+        return load_roster_csv(path)
+
+    def load_pairs(self, path: Path) -> set[Pair]:
+        """Load character pairs from the given path."""
+        return load_pairs_csv(path)
+
+    def load_units(self, path: Path) -> list[int]:
+        """Load unit sizes from the given path."""
+        return load_units_json(path)
+
+    def load_scoring(self, path: Path) -> CombatScoringConfig:
+        """Load combat scoring configuration from the given path."""
+        return load_combat_scoring_json(path)
+
+    def load_character_classes(self, path: Path) -> dict[str, str]:
+        """Load character class overrides from the given path."""
+        return load_character_classes_csv(path)
+
+    def write_json(self, path: Path, data: str) -> None:
+        """Write JSON content to the given path."""
+        path.write_text(data)
+
+    def write_text(self, path: Path, content: str) -> None:
+        """Write text content to the given path."""
+        path.write_text(content)

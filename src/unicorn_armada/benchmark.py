@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import math
-import random
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field
 
 from .combat import compute_combat_summary
-from .models import ClassDefinition, CombatScoringConfig
 from .solver import (
     SolveError,
     build_cluster_metrics,
@@ -15,7 +14,12 @@ from .solver import (
     build_unit_members_from_clusters,
     choose_clusters_to_drop,
 )
-from .utils import Pair
+
+if TYPE_CHECKING:
+    import random
+
+    from .models import ClassDefinition, CombatScoringConfig
+    from .utils import Pair
 
 
 class BenchmarkStats(BaseModel):

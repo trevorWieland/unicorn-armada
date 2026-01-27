@@ -1,13 +1,17 @@
 from __future__ import annotations
 
-from typing import Callable, Iterable
 import random
+from typing import TYPE_CHECKING
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from .models import Solution
 from .scoring import score_unit
-from .utils import Pair
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
+
+    from .utils import Pair
 
 
 class SolveError(ValueError):
@@ -38,7 +42,7 @@ class UnitState(BaseModel):
 class UnionFind:
     def __init__(self, items: Iterable[str]) -> None:
         self._parent = {item: item for item in items}
-        self._rank = {item: 0 for item in items}
+        self._rank = dict.fromkeys(items, 0)
 
     def find(self, item: str) -> str:
         parent = self._parent[item]
@@ -164,7 +168,7 @@ def solve(
             cluster_conflicts,
             swap_iterations,
         )
-        total_score, unit_scores = score_cluster_units(unit_clusters, cluster_rapports)
+        total_score, _unit_scores = score_cluster_units(unit_clusters, cluster_rapports)
         combat_score = 0.0
         if combat_score_fn is not None:
             unit_members = build_unit_members_from_clusters(
@@ -341,7 +345,7 @@ def choose_clusters_to_drop(
             candidate = dp_penalty[prev] + penalty
             if candidate < dp_penalty[total]:
                 dp_penalty[total] = candidate
-                dp_choice[total] = prev_choice + (idx,)
+                dp_choice[total] = (*prev_choice, idx)
 
     selected = dp_choice[extra]
     if selected is None:
@@ -408,9 +412,9 @@ def generate_initial_assignment(
 
     for cluster_idx in order:
         size = clusters[cluster_idx].size
-        best_unit = None
-        best_score = None
-        best_remaining = None
+        best_unit: int | None = None
+        best_score: int = 0
+        best_remaining: int = 0
         for unit_idx, state in enumerate(states):
             if state.capacity < size:
                 continue

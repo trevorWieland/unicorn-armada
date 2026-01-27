@@ -5,10 +5,10 @@ from .models import (
     CombatScoringConfig,
     CombatSummary,
     CombatUnitBreakdown,
-    CoverageWeights,
-    DiversityWeights,
     CoverageSummary,
+    CoverageWeights,
     DiversitySummary,
+    DiversityWeights,
 )
 
 
