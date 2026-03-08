@@ -13,14 +13,12 @@ dependencies = [
 unicorn-rapport = "unicorn_armada.cli:main"
 
 [build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+requires = ["uv-build>=0.1.0"]
+build-backend = "uv_build"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.uv.build-backend]
+module-name = "unicorn_armada"
+module-root = "src"
 
 [dependency-groups]
 dev = [
@@ -83,4 +81,4 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "raise NotImplementedError",
 ]
-fail_under = 35  # TODO: Raise to 80% as more tests are added
+fail_under = 80

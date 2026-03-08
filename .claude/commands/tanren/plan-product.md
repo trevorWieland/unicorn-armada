@@ -1,10 +1,10 @@
 # Plan Product
 
-Establish foundational product documentation through an interactive conversation. Creates mission, roadmap, and tech stack files in `agent-os/product/`.
+Establish foundational product documentation through an interactive conversation. Creates mission, roadmap, and tech stack files in `tanren/product/`.
 
 ## Important Guidelines
 
-- **Always use AskUserQuestion tool** when asking the user anything
+- **Always use AskUserQuestion tool** when asking the user anything. In TUI: use AskUserQuestion. In Discord/NanoClaw: use send_message with numbered options and wait for reply.
 - **Keep it lightweight** — gather enough to create useful docs without over-documenting
 - **One question at a time** — don't overwhelm with multiple questions
 
@@ -12,7 +12,7 @@ Establish foundational product documentation through an interactive conversation
 
 ### Step 1: Check for Existing Product Docs
 
-Check if `agent-os/product/` exists and contains any of these files:
+Check if `tanren/product/` exists and contains any of these files:
 - `mission.md`
 - `roadmap.md`
 - `tech-stack.md`
@@ -88,7 +88,7 @@ After they respond, use AskUserQuestion:
 
 ### Step 4: Establish Tech Stack (for tech-stack.md)
 
-First, check if `agent-os/standards/global/tech-stack.md` exists.
+First, check if `tanren/standards/global/tech-stack.md` exists.
 
 **If the tech-stack standard exists**, read it and use AskUserQuestion:
 
@@ -122,7 +122,7 @@ Please describe your tech stack:
 
 ### Step 5: Generate Files
 
-Create the `agent-os/product/` directory if it doesn't exist.
+Create the `tanren/product/` directory if it doesn't exist.
 
 Generate each file based on the information gathered:
 
@@ -189,9 +189,9 @@ After creating all files, output to user:
 ```
 ✓ Product documentation created:
 
-  agent-os/product/mission.md
-  agent-os/product/roadmap.md
-  agent-os/product/tech-stack.md
+  tanren/product/mission.md
+  tanren/product/roadmap.md
+  tanren/product/tech-stack.md
 
 Review these files to ensure they accurately capture your product vision.
 You can edit them directly or run /plan-product again to update.

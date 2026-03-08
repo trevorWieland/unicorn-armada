@@ -77,19 +77,17 @@ Core principles guiding combat scoring and team composition enhancements:
 - [x] Unit tests for `solver.py` (19 tests, 75% coverage)
 - [x] Unit tests for `combat.py` (52 tests)
 - [x] Unit tests for `benchmark.py` (37 tests)
-
-#### Remaining
-- [ ] Unit tests for `cli.py` (command tests)
-- [ ] Unit tests for `core.py`
-- [ ] Integration tests with BDD style (Given/When/Then)
-- [ ] Quality tests (if applicable - no LLM usage in this codebase)
-- [ ] Raise coverage threshold to 80%
-- [ ] Phase 2 spec documentation
+- [x] Unit tests for `cli.py` (command tests)
+- [x] Unit tests for `core.py`
+- [x] Integration tests with BDD style (Given/When/Then)
+- [x] Phase 2 spec documentation
+- [x] Raise coverage threshold to 80%
 
 #### Current Metrics
-- **180 unit tests** passing
-- **52% total coverage** (target 80%)
-- All `make all` checks pass (format, lint, type, unit)
+- **220 unit tests** passing
+- **3 integration tests** passing
+- **84% total coverage** (target 80%)
+- All `make all` checks pass (format, lint, type, unit, integration)
 
 #### Standards Being Applied
 - `testing/three-tier-test-structure`
@@ -152,6 +150,7 @@ Core principles guiding combat scoring and team composition enhancements:
 - [x] Benchmark outputs with percentiles and recommendations.
 - [x] README documentation for inputs, outputs, flags, and scoring.
 - [x] API response envelope for JSON outputs.
+- [x] `sync-rapports` JSON report output (`out/sync-rapports.json`).
 
 ### Data Reference
 - [x] Class reference catalog in `CLASS_REFERENCE.md`.
@@ -258,12 +257,13 @@ Core principles guiding combat scoring and team composition enhancements:
 - [x] Protocol interfaces for testability.
 - [x] API response envelope standardization.
 - [x] Structured logging infrastructure.
+- [x] Switch build system from setuptools to uv-native workflow.
+- [x] Raise test coverage to 80% threshold.
 
 ### Remaining
-- [ ] Raise test coverage to 80% threshold.
 - [ ] Add CI pipeline (GitHub Actions or similar).
-- [ ] Switch build system from setuptools to uv-native workflow.
 - [ ] Add pre-commit hooks for format/lint.
+- [ ] Plan uv workspace split when CLI/TUI become separate packages.
 
 ---
 
@@ -272,8 +272,8 @@ Core principles guiding combat scoring and team composition enhancements:
 ### Code Quality
 - [x] Extract all relevant business logic from CLI to core.py to adhere to standards.
 - [x] Add FileStorage usage in CLI (currently uses direct functions)
-- [ ] Implement structured logging in CLI commands
-- [ ] Add API response envelope to all JSON outputs (currently only benchmark)
+- [x] Implement structured logging in CLI commands
+- [x] Add API response envelope to all JSON outputs (currently only benchmark)
 
 ### Testing
 - [ ] Add property-based testing with Hypothesis

@@ -4,7 +4,7 @@ Extract tribal knowledge from your codebase into concise, documented standards.
 
 ## Important Guidelines
 
-- **Always use AskUserQuestion tool** when asking the user anything
+- **Always use AskUserQuestion tool** when asking the user anything. In TUI: use AskUserQuestion. In Discord/NanoClaw: use send_message with numbered options and wait for reply.
 - **Write concise standards** — Use minimal words. Standards must be scannable by AI agents without bloating context windows.
 - **Offer suggestions** — Present options the user can confirm, choose between, or correct. Don't make them think harder than necessary.
 
@@ -117,14 +117,14 @@ All API responses use this envelope:
 Create this file? (yes / edit: [your changes] / skip)
 ```
 
-4. Create or update the file in `agent-os/standards/[folder]/`
+4. Create or update the file in `tanren/standards/[folder]/`
 5. **Then repeat Steps 3-4 for the next selected standard**
 
 ### Step 5: Update the Index
 
 After all standards are created:
 
-1. Scan `agent-os/standards/` for all `.md` files
+1. Scan `tanren/standards/` for all `.md` files
 2. For each new file without an index entry, use AskUserQuestion:
 
 ```
@@ -136,7 +136,7 @@ Suggested description: "API response envelope structure and error format"
 Accept this description? (yes / or type a better one)
 ```
 
-3. Update `agent-os/standards/index.yml`:
+3. Update `tanren/standards/index.yml`:
 
 ```yaml
 api:
@@ -160,8 +160,8 @@ Would you like to discover standards in another area, or are we done?
 
 ## Output Location
 
-All standards: `agent-os/standards/[folder]/[standard].md`
-Index file: `agent-os/standards/index.yml`
+All standards: `tanren/standards/[folder]/[standard].md`
+Index file: `tanren/standards/index.yml`
 
 ## Writing Concise Standards
 
